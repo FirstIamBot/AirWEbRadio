@@ -2,7 +2,9 @@
  *Using LVGL with Arduino requires some extra steps:
  *Be sure to read the docs here: https://docs.lvgl.io/master/get-started/platforms/arduino.html  
  */
-#include <Arduino.h>
+#include "Task_TFT.h"
+
+
 #include <SPI.h>
 #include <FS.h>
 #include "SPIFFS.h" // ESP32 only
@@ -35,6 +37,14 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
+static void encoder_init(void);
+static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
+static void encoder_handler(void);
+void tc_finish_cb(lv_event_t *event) ;
+void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p );
+void my_touchpad_read( lv_indev_drv_t * indev_drv, lv_indev_data_t * data );
+void initTFT();
+void initCalTFT(void);
 
 AiEsp32RotaryEncoder Encoder = AiEsp32RotaryEncoder(
                     ROTARY_ENCODER_A_PIN, \
@@ -43,26 +53,80 @@ AiEsp32RotaryEncoder Encoder = AiEsp32RotaryEncoder(
                     ROTARY_ENCODER_VCC_PIN, \
                     ROTARY_ENCODER_STEPS);
 
+
 void IRAM_ATTR EncoderISR()
 {
   Encoder.readEncoder_ISR();
 }
-
-static void encoder_init(void);
-static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
-static void encoder_handler(void);
-
+//######################################################################################
+lv_indev_t * indev_touchpad;
 lv_indev_t * indev_encoder;
-lv_indev_t * indev_button;
+static lv_indev_t * indev_button;
 
-static lv_indev_drv_t indev_drv;
+static lv_indev_drv_t touch_indev_drv;
+static lv_indev_drv_t encoder_indev_drv;
+
 static int32_t encoder_diff;
 static lv_indev_state_t encoder_state;
+//######################################################################################
+static const uint16_t screenWidth  = 320;
+static const uint16_t screenHeight = 240;
+TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
-/*------------------
- * Encoder
- * -----------------*/
+static lv_disp_draw_buf_t draw_buf;
+static lv_color_t buf[ screenWidth * screenHeight / 10 ];
 
+extern SemaphoreHandle_t xSemaphoreSPI;
+
+#if LV_USE_LOG != 0
+/* Serial debugging */
+void my_print(const char * buf)
+{
+    Serial.printf(buf);
+    Serial.flush();
+}
+#endif
+
+void Task_TFT(void *pvParameters) 
+{
+    (void)pvParameters;
+
+    Serial.begin( 115200 ); /* prepare for possible serial debug */
+
+    String LVGL_Arduino = "Hello Arduino! ";
+    LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
+
+    Serial.println( LVGL_Arduino );
+    Serial.println( "I am LVGL_Arduino" );
+
+   initTFT();
+   lv_test();
+   /* gui_meter();
+    gui_bar();
+    lv_widgets(); 
+    initCalTFT();*/
+    
+    Serial.println( "Hello LVGL" );
+
+    while (1) // A Task shall never return or exit.
+    {
+        /* Delay 1 tick (assumes FreeRTOS tick is 10ms */
+        vTaskDelay(pdMS_TO_TICKS(10));
+
+        /* Try to take the semaphore, call lvgl related function on success 
+       if (pdTRUE == xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY)) {
+            lv_task_handler();
+            lv_tick_inc(LV_TICK_PERIOD_MS);
+            xSemaphoreGive(xSemaphoreSPI);
+       }*/
+       xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);
+       lv_task_handler();
+       lv_tick_inc(LV_TICK_PERIOD_MS);
+       xSemaphoreGive(xSemaphoreSPI);
+    }
+}
+
+//######################################################################################
 /*Initialize your keypad*/
 static void encoder_init(void)
 {
@@ -78,7 +142,6 @@ static void encoder_init(void)
     Serial.println("Encoder init");
 
 }
-
 /*Will be called by the library to read the encoder*/
 static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {
@@ -91,7 +154,6 @@ static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     else data->state = LV_INDEV_STATE_RELEASED;
 
 }
-
 /*Call this function in an interrupt to process encoder events (turn, press)*/
 static void encoder_handler(void)
 {
@@ -100,35 +162,11 @@ static void encoder_handler(void)
     encoder_state = LV_INDEV_STATE_REL;
     Serial.print("encoder_state = ");Serial.println(LV_INDEV_STATE_REL);
 }
-
-lv_indev_t * indev_touchpad;
-//######################################################################################
-static const uint16_t screenWidth  = 320;
-static const uint16_t screenHeight = 240;
-
-static lv_disp_draw_buf_t draw_buf;
-static lv_color_t buf[ screenWidth * screenHeight / 10 ];
-
-TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
-
 /* Your callback for when the calibration finishes */
 void tc_finish_cb(lv_event_t *event) {
     /* Load the application */
     lv_test(); /* Implement this */
 };
-
-extern SemaphoreHandle_t xSemaphoreSPI;
-//###################################################
-
-//###################################################
-#if LV_USE_LOG != 0
-/* Serial debugging */
-void my_print(const char * buf)
-{
-    Serial.printf(buf);
-    Serial.flush();
-}
-#endif
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p )
 {
@@ -142,7 +180,6 @@ void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *
 
     lv_disp_flush_ready( disp_drv );
 }
-
 /*Read the touchpad*/
 void my_touchpad_read( lv_indev_drv_t * indev_drv, lv_indev_data_t * data )
 {
@@ -196,32 +233,23 @@ void initTFT()
     lv_disp_drv_register( &disp_drv );
 
     /*Initialize the (dummy) input device driver*/
-
     /*------------------
      * Encoder
      * -----------------*/
     /*Initialize your encoder if you have*/
     encoder_init();
-
-
     /*Register a encoder input device*/
-    lv_indev_drv_init(&indev_drv);
-    indev_drv.type = LV_INDEV_TYPE_ENCODER;
-    indev_drv.read_cb = encoder_read;
-    indev_encoder = lv_indev_drv_register(&indev_drv);
-    /*create group(s)*/
+    lv_indev_drv_init(&encoder_indev_drv);
+    encoder_indev_drv.type = LV_INDEV_TYPE_ENCODER;
+    encoder_indev_drv.read_cb = encoder_read;
+    indev_encoder = lv_indev_drv_register(&encoder_indev_drv);
     /*------------------
      * TouchPad
      * -----------------*/
-    lv_indev_drv_init( &indev_drv );
-    indev_drv.type = LV_INDEV_TYPE_POINTER;
-    indev_drv.read_cb = my_touchpad_read;
-    indev_touchpad = lv_indev_drv_register(&indev_drv);
-
-    lv_group_t *group = lv_group_create();
-    lv_group_set_default(group);
-    lv_indev_set_group(indev_touchpad, group);
-    lv_indev_set_group(indev_encoder, group);
+    lv_indev_drv_init( &touch_indev_drv );
+    touch_indev_drv.type = LV_INDEV_TYPE_POINTER;
+    touch_indev_drv.read_cb = my_touchpad_read;
+    indev_touchpad = lv_indev_drv_register(&touch_indev_drv);
 }
 /* Init TFT without calibrate */
 void initCalTFT(void)
@@ -248,6 +276,7 @@ void initCalTFT(void)
     disp_drv.flush_cb = my_disp_flush;
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register( &disp_drv );
+    
 
     static lv_indev_drv_t indevDrv;
     lv_tc_indev_drv_init(&indevDrv, my_touchpad_read);
@@ -269,44 +298,4 @@ void initCalTFT(void)
         lv_tc_screen_start(tCScreen);
     }
 
-}
-
-
-void Task_TFT(void *pvParameters) 
-{
-    (void)pvParameters;
-
-    Serial.begin( 115200 ); /* prepare for possible serial debug */
-
-    String LVGL_Arduino = "Hello Arduino! ";
-    LVGL_Arduino += String('V') + lv_version_major() + "." + lv_version_minor() + "." + lv_version_patch();
-
-    Serial.println( LVGL_Arduino );
-    Serial.println( "I am LVGL_Arduino" );
-
-   initTFT();
-   lv_test();
-   /* gui_meter();
-    gui_bar();
-    lv_widgets(); 
-    initCalTFT();*/
-    
-    Serial.println( "Hello LVGL" );
-
-    while (1) // A Task shall never return or exit.
-    {
-        /* Delay 1 tick (assumes FreeRTOS tick is 10ms */
-        vTaskDelay(pdMS_TO_TICKS(10));
-
-        /* Try to take the semaphore, call lvgl related function on success 
-       if (pdTRUE == xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY)) {
-            lv_task_handler();
-            lv_tick_inc(LV_TICK_PERIOD_MS);
-            xSemaphoreGive(xSemaphoreSPI);
-       }*/
-       xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);
-       lv_task_handler();
-       lv_tick_inc(LV_TICK_PERIOD_MS);
-       xSemaphoreGive(xSemaphoreSPI);
-    }
 }

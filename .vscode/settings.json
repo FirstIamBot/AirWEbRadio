@@ -8,6 +8,10 @@
         "array": "c",
         "optional": "c",
         "stdexcept": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "lv_group.h": "c",
+        "task_tft.h": "c",
+        "lv_test.h": "c",
+        "lvgl.h": "c"
     }
 }

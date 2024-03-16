@@ -11,6 +11,7 @@
 #include <TFT_eSPI.h> // Hardware-specific library
 #include <TFT_eWidget.h>    
 //#include "Free_Fonts.h"
+#include "Task_TFT.h"
 
 /************************************************************************************************
     Define prototipr Task

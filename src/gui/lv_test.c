@@ -1,8 +1,15 @@
 #include "lv_test.h"
 #include <lvgl.h>
 
-extern lv_group_t *group ;
 
+lv_group_t *group;
+
+extern lv_indev_t * indev_touchpad;
+extern lv_indev_t * indev_encoder;
+
+/**
+ * Handle multiple events
+ */
 static void event_cb(lv_event_t * e)
 {
     lv_event_code_t code = lv_event_get_code(e);
@@ -26,15 +33,19 @@ static void event_cb(lv_event_t * e)
     }
 }
 
-/**
- * Handle multiple events
- */
 void lv_test(void)
 {
+    group = lv_group_create();
+    lv_group_set_default(group);
+    lv_indev_set_group(indev_touchpad, group);
+    lv_indev_set_group(indev_encoder, group);
+
     lv_obj_t * btn = lv_btn_create(lv_scr_act());
     lv_obj_set_size(btn, 100, 50);
     lv_obj_center(btn);
-    
+
+    lv_group_add_obj(group, btn);
+
     lv_obj_t * btn_label = lv_label_create(btn);
     lv_label_set_text(btn_label, "Click me!");
     lv_obj_center(btn_label);
@@ -44,3 +55,5 @@ void lv_test(void)
 
     lv_obj_add_event_cb(btn, event_cb, LV_EVENT_ALL, info_label);
 }
+
+
