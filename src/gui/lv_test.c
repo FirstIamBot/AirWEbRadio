@@ -1,6 +1,8 @@
 #include "lv_test.h"
 #include <lvgl.h>
 
+extern lv_group_t *group ;
+
 static void event_cb(lv_event_t * e)
 {
     lv_event_code_t code = lv_event_get_code(e);
@@ -32,7 +34,7 @@ void lv_test(void)
     lv_obj_t * btn = lv_btn_create(lv_scr_act());
     lv_obj_set_size(btn, 100, 50);
     lv_obj_center(btn);
-
+    
     lv_obj_t * btn_label = lv_label_create(btn);
     lv_label_set_text(btn_label, "Click me!");
     lv_obj_center(btn_label);

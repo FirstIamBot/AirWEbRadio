@@ -18,14 +18,91 @@
 #include "lvgl_touch_calibration/lv_tc_screen.h"
 #include "lvgl_touch_calibration/esp_nvs_tc.h"
 
+#include <AiEsp32RotaryEncoder.h>
 /**********************
  *   DEFINES
  **********************/
 #define LV_TICK_PERIOD_MS 10
+//********************************     Rotary Encoder    ******************************
+#define ROTARY_ENCODER_A_PIN      3  // CLK(А)     синий   25 
+#define ROTARY_ENCODER_B_PIN      1  // DT(В)      зелёный 26
+#define ROTARY_ENCODER_BUTTON_PIN 13  // SW(Button) фиолетовый
+#define ROTARY_ENCODER_VCC_PIN   -1   //
+//depending on your encoder - try 1,2 or 4 to get expected behaviour
+//#define ROTARY_ENCODER_STEPS 1
+//#define ROTARY_ENCODER_STEPS 2
+#define ROTARY_ENCODER_STEPS 4
 /**********************
  *  STATIC PROTOTYPES
  **********************/
 
+AiEsp32RotaryEncoder Encoder = AiEsp32RotaryEncoder(
+                    ROTARY_ENCODER_A_PIN, \
+                    ROTARY_ENCODER_B_PIN, \
+                    ROTARY_ENCODER_BUTTON_PIN, \
+                    ROTARY_ENCODER_VCC_PIN, \
+                    ROTARY_ENCODER_STEPS);
+
+void IRAM_ATTR EncoderISR()
+{
+  Encoder.readEncoder_ISR();
+}
+
+static void encoder_init(void);
+static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
+static void encoder_handler(void);
+
+lv_indev_t * indev_encoder;
+lv_indev_t * indev_button;
+
+static lv_indev_drv_t indev_drv;
+static int32_t encoder_diff;
+static lv_indev_state_t encoder_state;
+
+/*------------------
+ * Encoder
+ * -----------------*/
+
+/*Initialize your keypad*/
+static void encoder_init(void)
+{
+    Encoder.begin();
+    Encoder.setup(EncoderISR);
+    //Encoder.setup([]{Encoder.readEncoder_ISR();}); // установка прерываний для Энкодера
+    //optionally we can set boundaries and if values should cycle or not
+    bool circleValues = false;
+    Encoder.setBoundaries(0, 400, circleValues);// Установка границы от текущей темрературы до максимальной
+    Encoder.setAcceleration(150); //or set the value - larger number = more accelearation; 0 or 1 means disabled acceleration
+    //Encoder.disableAcceleration(); //acceleration is now enabled by default - disable if you dont need it
+    Encoder.setEncoderValue(25); // init start value rotary encoder
+    Serial.println("Encoder init");
+
+}
+
+/*Will be called by the library to read the encoder*/
+static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
+{
+    if(Encoder.encoderChanged())
+	{
+        encoder_diff = Encoder.readEncoder();
+        Serial.print("encoder_diff = ");Serial.println(encoder_diff);
+	}
+    if(Encoder.isEncoderButtonDown()) data->state = LV_INDEV_STATE_PRESSED;
+    else data->state = LV_INDEV_STATE_RELEASED;
+
+}
+
+/*Call this function in an interrupt to process encoder events (turn, press)*/
+static void encoder_handler(void)
+{
+    /*Your code comes here*/
+    encoder_diff += 0;
+    encoder_state = LV_INDEV_STATE_REL;
+    Serial.print("encoder_state = ");Serial.println(LV_INDEV_STATE_REL);
+}
+
+lv_indev_t * indev_touchpad;
+//######################################################################################
 static const uint16_t screenWidth  = 320;
 static const uint16_t screenHeight = 240;
 
@@ -119,15 +196,32 @@ void initTFT()
     lv_disp_drv_register( &disp_drv );
 
     /*Initialize the (dummy) input device driver*/
+
+    /*------------------
+     * Encoder
+     * -----------------*/
+    /*Initialize your encoder if you have*/
+    encoder_init();
+
+
+    /*Register a encoder input device*/
+    lv_indev_drv_init(&indev_drv);
+    indev_drv.type = LV_INDEV_TYPE_ENCODER;
+    indev_drv.read_cb = encoder_read;
+    indev_encoder = lv_indev_drv_register(&indev_drv);
+    /*create group(s)*/
     /*------------------
      * TouchPad
      * -----------------*/
-    static lv_indev_drv_t indev_drv;
     lv_indev_drv_init( &indev_drv );
     indev_drv.type = LV_INDEV_TYPE_POINTER;
     indev_drv.read_cb = my_touchpad_read;
-    lv_indev_drv_register( &indev_drv );
+    indev_touchpad = lv_indev_drv_register(&indev_drv);
 
+    lv_group_t *group = lv_group_create();
+    lv_group_set_default(group);
+    lv_indev_set_group(indev_touchpad, group);
+    lv_indev_set_group(indev_encoder, group);
 }
 /* Init TFT without calibrate */
 void initCalTFT(void)
@@ -177,6 +271,7 @@ void initCalTFT(void)
 
 }
 
+
 void Task_TFT(void *pvParameters) 
 {
     (void)pvParameters;
@@ -189,12 +284,12 @@ void Task_TFT(void *pvParameters)
     Serial.println( LVGL_Arduino );
     Serial.println( "I am LVGL_Arduino" );
 
-   /*initTFT();
-    lv_test();
-    gui_meter();
+   initTFT();
+   lv_test();
+   /* gui_meter();
     gui_bar();
-    lv_widgets(); */
-    initCalTFT();
+    lv_widgets(); 
+    initCalTFT();*/
     
     Serial.println( "Hello LVGL" );
 

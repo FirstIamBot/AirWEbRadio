@@ -1,6 +1,13 @@
 {
     "idf.adapterTargetName": "esp32",
     "files.associations": {
-        "math.h": "c"
+        "math.h": "c",
+        "atomic": "c",
+        "*.tcc": "c",
+        "exception": "c",
+        "array": "c",
+        "optional": "c",
+        "stdexcept": "c",
+        "type_traits": "c"
     }
 }

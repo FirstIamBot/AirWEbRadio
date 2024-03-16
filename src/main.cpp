@@ -15,7 +15,7 @@
 /************************************************************************************************
     Define prototipr Task
 *************************************************************************************************/
-void Task_Encoder(void *pvParameters);
+//void Task_Encoder(void *pvParameters);
 void Task_WebRadio(void *pvParameters);
 void Task_TFT(void *pvParameters);
 
@@ -45,7 +45,7 @@ void setup(){
     }
 
     //xTaskCreatePinnedToCore( printValues, "Print ADC Values", 1536,  NULL, 3, NULL, app_cpu );
-    xTaskCreatePinnedToCore( Task_Encoder, " Encoder", 1000,  NULL, 2, NULL, app_cpu );
+    //xTaskCreatePinnedToCore( Task_Encoder, " Encoder", 1000,  NULL, 2, NULL, app_cpu );
     xTaskCreatePinnedToCore( Task_TFT, " TFT", 1000*4,  NULL, 2, NULL, app_cpu );
     xTaskCreatePinnedToCore( Task_WebRadio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
    
