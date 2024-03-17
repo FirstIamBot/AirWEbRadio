@@ -1,0 +1,1 @@
+GEN_CSRCS += _nxp200_alpha_40x28.c _nxp200_alpha_133x94.c

@@ -52,8 +52,6 @@ void setup(){
    
     Serial.println("\n*** All Tasks Created ***\n");        // Critical Section
 
-    //xSemaphoreGive(xSemaphoreSPI);
-
 }
 
 void loop() {}

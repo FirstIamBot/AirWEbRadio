@@ -68,6 +68,9 @@ static lv_indev_drv_t encoder_indev_drv;
 
 static int32_t encoder_diff;
 static lv_indev_state_t encoder_state;
+
+
+
 //######################################################################################
 static const uint16_t screenWidth  = 320;
 static const uint16_t screenHeight = 240;
@@ -99,13 +102,17 @@ void Task_TFT(void *pvParameters)
     Serial.println( LVGL_Arduino );
     Serial.println( "I am LVGL_Arduino" );
 
-   initTFT();
-   lv_test();
-   /* gui_meter();
+
+    /*  
+    initTFT();
+    gui_meter();
+    lv_test();
+    gui_meter();
     gui_bar();
     lv_widgets(); 
-    initCalTFT();*/
-    
+    */
+    initCalTFT();
+
     Serial.println( "Hello LVGL" );
 
     while (1) // A Task shall never return or exit.
@@ -165,7 +172,7 @@ static void encoder_handler(void)
 /* Your callback for when the calibration finishes */
 void tc_finish_cb(lv_event_t *event) {
     /* Load the application */
-    lv_test(); /* Implement this */
+    awgui(); /* Implement this */
 };
 /* Display flushing */
 void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p )
@@ -216,6 +223,7 @@ void initTFT()
 #endif
 
     tft.begin();          /* TFT init */
+    tft.initDMA();
     tft.setRotation( 3 ); /* Landscape orientation, flipped */
     uint16_t calData[5] = {174, 2543, 208, 4574, 1};
     tft.setTouch( calData );
@@ -276,12 +284,26 @@ void initCalTFT(void)
     disp_drv.flush_cb = my_disp_flush;
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register( &disp_drv );
-    
+   /*------------------
+     * Encoder
+     * -----------------*/
+    /*Initialize your encoder if you have*/
+    encoder_init();
+    /*Register a encoder input device*/
+    lv_indev_drv_init(&encoder_indev_drv);
+    encoder_indev_drv.type = LV_INDEV_TYPE_ENCODER;
+    encoder_indev_drv.read_cb = encoder_read;
 
-    static lv_indev_drv_t indevDrv;
-    lv_tc_indev_drv_init(&indevDrv, my_touchpad_read);
+    indev_encoder = lv_indev_drv_register(&encoder_indev_drv);
+
+    //lv_indev_drv_t indevDrv;
+
+    lv_tc_indev_drv_init(&touch_indev_drv, my_touchpad_read);
     /* Register the driver. */
-    lv_indev_drv_register(&indevDrv);
+    lv_indev_drv_register(&touch_indev_drv);
+
+    indev_touchpad = lv_indev_drv_register(&touch_indev_drv);
+
     /* If using NVS: Register a calibration coefficients save callback. */
     lv_tc_register_coeff_save_cb(esp_nvs_tc_coeff_save_cb);
     /* Create the calibration screen. */
@@ -291,7 +313,7 @@ void initCalTFT(void)
     /* If using NVS: Init NVS and check for existing calibration data. */
     if(esp_nvs_tc_coeff_init()) {
         lv_obj_clean(lv_scr_act()); // Очистка экрана
-        lv_test(); /* Implement this */
+        awgui(); /* Implement this */
     } else {
         /* There is no data: load the calibration screen, perform the calibration */
         lv_disp_load_scr(tCScreen);

@@ -12,6 +12,11 @@
         "lv_group.h": "c",
         "task_tft.h": "c",
         "lv_test.h": "c",
-        "lvgl.h": "c"
+        "lvgl.h": "c",
+        "custom.h": "c",
+        "gui_guider.h": "c",
+        "gui_meter.h": "c",
+        "events_init.h": "c",
+        "gui_scrol.h": "c"
     }
 }
