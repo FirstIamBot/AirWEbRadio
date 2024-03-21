@@ -146,15 +146,12 @@ void init_scr_del_flag(lv_ui *ui)
 {
   
 	ui->pageStatic_del = true;
-	ui->pageActive_del = true;
-	ui->main_del = true;
-	ui->Band_del = true;
-	ui->screen_1_del = true;
+	ui->pageAirradio_del = true;
 }
 
 void setup_ui(lv_ui *ui)
 {
 	init_scr_del_flag(ui);
-	setup_scr_pageStatic(ui);
-	lv_scr_load(ui->pageStatic);
+	setup_scr_pageAirradio(ui);
+	lv_scr_load(ui->pageAirradio);
 }

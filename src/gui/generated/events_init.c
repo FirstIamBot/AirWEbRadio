@@ -17,7 +17,12 @@
 
 
 #include "custom.h"
-static lv_timer_t  * task_tprogress;
+uint8_t GUI_bandIdx;
+#include "custom.h"
+int slider_vol;
+uint8_t GUI_BandWFMIdx;
+uint8_t GUI_ModIdx;
+uint8_t GUI_StepFMIdx;
 static void pageStatic_btn_next_page_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
@@ -25,7 +30,7 @@ static void pageStatic_btn_next_page_event_handler (lv_event_t *e)
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		ui_load_scr_animation(&guider_ui, &guider_ui.pageActive, guider_ui.pageActive_del, &guider_ui.pageStatic_del, setup_scr_pageActive, LV_SCR_LOAD_ANIM_NONE, 100, 200, false, true);
+		ui_load_scr_animation(&guider_ui, &guider_ui.pageAirradio, guider_ui.pageAirradio_del, &guider_ui.pageStatic_del, setup_scr_pageAirradio, LV_SCR_LOAD_ANIM_NONE, 100, 100, false, true);
 		break;
 	}
 	default:
@@ -55,60 +60,44 @@ void events_init_pageStatic(lv_ui *ui)
 	lv_obj_add_event_cb(ui->pageStatic_btn_next_page, pageStatic_btn_next_page_event_handler, LV_EVENT_ALL, NULL);
 	lv_obj_add_event_cb(ui->pageStatic_slider_all, pageStatic_slider_all_event_handler, LV_EVENT_ALL, NULL);
 }
-static void pageActive_event_handler (lv_event_t *e)
-{
-	lv_event_code_t code = lv_event_get_code(e);
-
-	switch (code) {
-	case LV_EVENT_SCREEN_LOADED:
-	{
-		task_tprogress = lv_timer_create(pageActive_tprogress_img_1_timer_cb, 100, NULL);
-		break;
-	}
-	case LV_EVENT_SCREEN_UNLOAD_START:
-	{
-		lv_timer_del(task_tprogress);
-		break;
-	}
-	default:
-		break;
-	}
-}
-static void pageActive_btn_pre_btn_event_handler (lv_event_t *e)
+static void pageAirradio_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		ui_load_scr_animation(&guider_ui, &guider_ui.pageStatic, guider_ui.pageStatic_del, &guider_ui.pageActive_del, setup_scr_pageStatic, LV_SCR_LOAD_ANIM_NONE, 100, 200, false, true);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_BandFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_BandFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_Mod, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_Mob, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_StepFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_StepFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_slider_vol, LV_OBJ_FLAG_HIDDEN);
 		break;
 	}
 	default:
 		break;
 	}
 }
-static void pageActive_btn_1_event_handler (lv_event_t *e)
+static void pageAirradio_btn_vol_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		ui_load_scr_animation(&guider_ui, &guider_ui.main, guider_ui.main_del, &guider_ui.pageActive_del, setup_scr_main, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+		lv_obj_clear_flag(guider_ui.pageAirradio_cont_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(guider_ui.pageAirradio_slider_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(guider_ui.pageAirradio_textprogress_vol, LV_OBJ_FLAG_HIDDEN);
 		break;
 	}
 	default:
 		break;
 	}
 }
-void events_init_pageActive(lv_ui *ui)
-{
-	lv_obj_add_event_cb(ui->pageActive, pageActive_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageActive_btn_pre_btn, pageActive_btn_pre_btn_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageActive_btn_1, pageActive_btn_1_event_handler, LV_EVENT_ALL, NULL);
-}
-static void main_btnm_1_event_handler (lv_event_t *e)
+static void pageAirradio_btnm_Main_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
@@ -118,19 +107,43 @@ static void main_btnm_1_event_handler (lv_event_t *e)
 		lv_obj_t * obj = lv_event_get_target(e);
 		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
 		switch(id) {
-		case 15:
+		case 0:
 		{
-			ui_load_scr_animation(&guider_ui, &guider_ui.pageStatic, guider_ui.pageStatic_del, &guider_ui.main_del, setup_scr_pageStatic, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+			GUI_bandIdx = 0;
 			break;
 		}
-		case 16:
+		case 1:
 		{
-			ui_load_scr_animation(&guider_ui, &guider_ui.Band, guider_ui.Band_del, &guider_ui.main_del, setup_scr_Band, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+			GUI_bandIdx = 1;
 			break;
 		}
-		case 17:
+		case 2:
 		{
-			ui_load_scr_animation(&guider_ui, &guider_ui.screen_1, guider_ui.screen_1_del, &guider_ui.main_del, setup_scr_screen_1, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+			GUI_bandIdx = 2;
+			break;
+		}
+		case 3:
+		{
+			GUI_bandIdx = 3;
+		
+			break;
+		}
+		case 4:
+		{
+			lv_obj_clear_flag(guider_ui.pageAirradio_cont_Mod, LV_OBJ_FLAG_HIDDEN);
+			lv_obj_clear_flag(guider_ui.pageAirradio_btnm_Mob, LV_OBJ_FLAG_HIDDEN);
+			break;
+		}
+		case 5:
+		{
+			lv_obj_clear_flag(guider_ui.pageAirradio_cont_BandFM, LV_OBJ_FLAG_HIDDEN);
+			lv_obj_clear_flag(guider_ui.pageAirradio_btnm_BandFM, LV_OBJ_FLAG_HIDDEN);
+			break;
+		}
+		case 6:
+		{
+			lv_obj_clear_flag(guider_ui.pageAirradio_cont_StepFM, LV_OBJ_FLAG_HIDDEN);
+			lv_obj_clear_flag(guider_ui.pageAirradio_btnm_StepFM, LV_OBJ_FLAG_HIDDEN);
 			break;
 		}
 		default:
@@ -142,45 +155,172 @@ static void main_btnm_1_event_handler (lv_event_t *e)
 		break;
 	}
 }
-void events_init_main(lv_ui *ui)
-{
-	lv_obj_add_event_cb(ui->main_btnm_1, main_btnm_1_event_handler, LV_EVENT_ALL, NULL);
-}
-static void Band_event_handler (lv_event_t *e)
+static void pageAirradio_slider_vol_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
 	switch (code) {
-	case LV_EVENT_CLICKED:
+	case LV_EVENT_VALUE_CHANGED:
 	{
-		ui_load_scr_animation(&guider_ui, &guider_ui.main, guider_ui.main_del, &guider_ui.Band_del, setup_scr_main, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+		slider_vol = lv_slider_get_value(guider_ui.pageAirradio_slider_vol);
+	lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, slider_vol);
 		break;
 	}
 	default:
 		break;
 	}
 }
-void events_init_Band(lv_ui *ui)
-{
-	lv_obj_add_event_cb(ui->Band, Band_event_handler, LV_EVENT_ALL, NULL);
-}
-static void screen_1_btn_1_event_handler (lv_event_t *e)
+static void pageAirradio_btn_1_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		ui_load_scr_animation(&guider_ui, &guider_ui.main, guider_ui.main_del, &guider_ui.screen_1_del, setup_scr_main, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+		ui_load_scr_animation(&guider_ui, &guider_ui.pageStatic, guider_ui.pageStatic_del, &guider_ui.pageAirradio_del, setup_scr_pageStatic, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
 		break;
 	}
 	default:
 		break;
 	}
 }
-void events_init_screen_1(lv_ui *ui)
+static void pageAirradio_btnm_BandFM_event_handler (lv_event_t *e)
 {
-	lv_obj_add_event_cb(ui->screen_1_btn_1, screen_1_btn_1_event_handler, LV_EVENT_ALL, NULL);
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			GUI_BandWFMIdx = 0;
+			break;
+		}
+		case 1:
+		{
+			GUI_BandWFMIdx = 1;
+			break;
+		}
+		case 2:
+		{
+			GUI_BandWFMIdx = 2;
+			break;
+		}
+		case 3:
+		{
+			GUI_BandWFMIdx = 3;
+			break;
+		}
+		case 4:
+		{
+			GUI_BandWFMIdx = 4;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_btnm_Mob_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			GUI_ModIdx = 0;
+			break;
+		}
+		case 1:
+		{
+			GUI_ModIdx = 1;
+			break;
+		}
+		case 2:
+		{
+			GUI_ModIdx = 2;
+			break;
+		}
+		case 3:
+		{
+			GUI_ModIdx = 3;
+			break;
+		}
+		case 4:
+		{
+			GUI_ModIdx = 4;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_btnm_StepFM_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			GUI_StepFMIdx = 0;
+			break;
+		}
+		case 1:
+		{
+			GUI_StepFMIdx = 1;
+			break;
+		}
+		case 2:
+		{
+			GUI_StepFMIdx = 2;
+			break;
+		}
+		case 3:
+		{
+			GUI_StepFMIdx = 3;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+void events_init_pageAirradio(lv_ui *ui)
+{
+	lv_obj_add_event_cb(ui->pageAirradio, pageAirradio_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btn_vol, pageAirradio_btn_vol_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_Main, pageAirradio_btnm_Main_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_slider_vol, pageAirradio_slider_vol_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btn_1, pageAirradio_btn_1_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_BandFM, pageAirradio_btnm_BandFM_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_Mob, pageAirradio_btnm_Mob_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_StepFM, pageAirradio_btnm_StepFM_event_handler, LV_EVENT_ALL, NULL);
 }
 
 void events_init(lv_ui *ui)

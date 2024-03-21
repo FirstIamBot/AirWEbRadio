@@ -40,11 +40,4 @@ void custom_init(lv_ui *ui)
     /* Add your codes here */
 }
 
-void pageActive_tprogress_img_1_timer_cb(lv_timer_t * t)
-{
-    lv_textprogress_set_value(guider_ui.pageActive_textprogress_img_1, input_value);
-    lv_obj_set_style_img_opa(guider_ui.pageActive_img_1, input_value * 255 / 100, LV_STATE_DEFAULT);
 
-    if(input_value < 100) input_value ++;
-    else input_value = 0;
-}

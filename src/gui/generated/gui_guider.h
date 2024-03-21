@@ -29,30 +29,29 @@ typedef struct
 	lv_obj_t *pageStatic_tp_step_5;
 	lv_obj_t *pageStatic_tp_step_1;
 	lv_obj_t *pageStatic_img_1;
-	lv_obj_t *pageActive;
-	bool pageActive_del;
-	lv_obj_t *pageActive_btn_pre_btn;
-	lv_obj_t *pageActive_btn_pre_btn_label;
-	lv_obj_t *pageActive_label_title_acticity;
-	lv_obj_t *pageActive_textprogress_img_1;
-	lv_obj_t *pageActive_img_1;
-	lv_obj_t *pageActive_btn_1;
-	lv_obj_t *pageActive_btn_1_label;
-	lv_obj_t *main;
-	bool main_del;
-	lv_obj_t *main_btnm_1;
-	lv_obj_t *main_label_2;
-	lv_obj_t *Band;
-	bool Band_del;
-	lv_obj_t *Band_btnm_1;
-	lv_obj_t *screen_1;
-	bool screen_1_del;
-	lv_obj_t *screen_1_cont_1;
-	lv_obj_t *screen_1_slider_vol;
-	lv_obj_t *screen_1_btn_1;
-	lv_obj_t *screen_1_btn_1_label;
-	lv_obj_t *screen_1_btn_2;
-	lv_obj_t *screen_1_btn_2_label;
+	lv_obj_t *pageAirradio;
+	bool pageAirradio_del;
+	lv_obj_t *pageAirradio_RDS;
+	lv_obj_t *pageAirradio_spangroup_1;
+	lv_obj_t *pageAirradio_spangroup_2;
+	lv_obj_t *pageAirradio_up_step;
+	lv_obj_t *pageAirradio_up_step_label;
+	lv_obj_t *pageAirradio_down_step;
+	lv_obj_t *pageAirradio_down_step_label;
+	lv_obj_t *pageAirradio_btn_vol;
+	lv_obj_t *pageAirradio_btn_vol_label;
+	lv_obj_t *pageAirradio_btnm_Main;
+	lv_obj_t *pageAirradio_cont_vol;
+	lv_obj_t *pageAirradio_textprogress_vol;
+	lv_obj_t *pageAirradio_slider_vol;
+	lv_obj_t *pageAirradio_btn_1;
+	lv_obj_t *pageAirradio_btn_1_label;
+	lv_obj_t *pageAirradio_cont_BandFM;
+	lv_obj_t *pageAirradio_btnm_BandFM;
+	lv_obj_t *pageAirradio_cont_Mod;
+	lv_obj_t *pageAirradio_btnm_Mob;
+	lv_obj_t *pageAirradio_cont_StepFM;
+	lv_obj_t *pageAirradio_btnm_StepFM;
 }lv_ui;
 
 typedef void (*ui_setup_scr_t)(lv_ui * ui);
@@ -86,19 +85,17 @@ void setup_ui(lv_ui *ui);
 extern lv_ui guider_ui;
 
 void setup_scr_pageStatic(lv_ui *ui);
-void setup_scr_pageActive(lv_ui *ui);
-void setup_scr_main(lv_ui *ui);
-void setup_scr_Band(lv_ui *ui);
-void setup_scr_screen_1(lv_ui *ui);
-LV_IMG_DECLARE(_nxp200_alpha_40x28);
-LV_IMG_DECLARE(_nxp200_alpha_133x94);
+void setup_scr_pageAirradio(lv_ui *ui);
+LV_IMG_DECLARE(_nxp60_alpha_40x28);
 
 LV_FONT_DECLARE(lv_font_Antonio_Regular_19)
 LV_FONT_DECLARE(lv_font_montserratMedium_10)
 LV_FONT_DECLARE(lv_font_Antonio_Regular_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
-LV_FONT_DECLARE(lv_font_Abel_regular_20)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
+LV_FONT_DECLARE(lv_font_montserratMedium_36)
+LV_FONT_DECLARE(lv_font_montserratMedium_20)
+LV_FONT_DECLARE(lv_font_montserratMedium_14)
 
 
 #ifdef __cplusplus

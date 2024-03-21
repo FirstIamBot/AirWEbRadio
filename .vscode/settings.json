@@ -17,6 +17,9 @@
         "gui_guider.h": "c",
         "gui_meter.h": "c",
         "events_init.h": "c",
-        "gui_scrol.h": "c"
+        "gui_scrol.h": "c",
+        "patch_full.h": "c",
+        "system_error": "c",
+        "regex": "c"
     }
 }

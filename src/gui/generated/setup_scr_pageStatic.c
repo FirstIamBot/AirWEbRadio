@@ -27,7 +27,7 @@ void setup_scr_pageStatic(lv_ui *ui)
 	lv_obj_set_style_bg_opa(ui->pageStatic, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_color(ui->pageStatic, lv_color_hex(0x7dcdb7), LV_PART_MAIN|LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_grad_dir(ui->pageStatic, LV_GRAD_DIR_VER, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_color(ui->pageStatic, lv_color_hex(0x225a5d), LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_bg_grad_color(ui->pageStatic, lv_color_hex(0x99edd7), LV_PART_MAIN|LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_main_stop(ui->pageStatic, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
 	lv_obj_set_style_bg_grad_stop(ui->pageStatic, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
 
@@ -101,7 +101,7 @@ void setup_scr_pageStatic(lv_ui *ui)
 	lv_textprogress_set_range_value(ui->pageStatic_tp_step_20, 0, 100, 5, 0);
 	lv_textprogress_set_decimal(ui->pageStatic_tp_step_20, 0);
 	lv_textprogress_set_value(ui->pageStatic_tp_step_20, 0);
-	lv_obj_set_pos(ui->pageStatic_tp_step_20, 46, 131);
+	lv_obj_set_pos(ui->pageStatic_tp_step_20, 47, 131);
 	lv_obj_set_size(ui->pageStatic_tp_step_20, 66, 27);
 
 	//Write style for pageStatic_tp_step_20, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
@@ -190,7 +190,7 @@ void setup_scr_pageStatic(lv_ui *ui)
 	//Write codes pageStatic_img_1
 	ui->pageStatic_img_1 = lv_img_create(ui->pageStatic);
 	lv_obj_add_flag(ui->pageStatic_img_1, LV_OBJ_FLAG_CLICKABLE);
-	lv_img_set_src(ui->pageStatic_img_1, &_nxp200_alpha_40x28);
+	lv_img_set_src(ui->pageStatic_img_1, &_nxp60_alpha_40x28);
 	lv_img_set_pivot(ui->pageStatic_img_1, 50,50);
 	lv_img_set_angle(ui->pageStatic_img_1, 0);
 	lv_obj_set_pos(ui->pageStatic_img_1, 140, 75);

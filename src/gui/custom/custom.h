@@ -16,7 +16,7 @@ extern "C" {
 #include "gui_guider.h"
 
 void custom_init(lv_ui *ui);
-void pageActive_tprogress_img_1_timer_cb(lv_timer_t * t);
+
 
 #ifdef __cplusplus
 }

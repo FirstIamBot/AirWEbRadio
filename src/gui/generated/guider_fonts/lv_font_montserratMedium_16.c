@@ -9,7 +9,7 @@
 /*******************************************************************************
  * Size: 16 px
  * Bpp: 4
- * Opts: --enable-crashpad --crashpad-handler-pid=285803 --enable-crash-reporter=b8c9a42a-c1c1-4964-b0d6-7a3fb05b9f5a,no_channel --user-data-dir=/home/gena/.config/gui-guider --app-path=/opt/Gui-Guider/resources/app.asar --no-sandbox --no-zygote --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1710660901360659 --launch-time-ticks=32900833663 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,6793679295445899512,10200745821628452336,131072 --disable-features=SpareRendererForSitePerProcess --enable-crashpad
+ * Opts: --enable-crashpad --crashpad-handler-pid=6338 --enable-crash-reporter=b8c9a42a-c1c1-4964-b0d6-7a3fb05b9f5a,no_channel --user-data-dir=/home/gena/.config/gui-guider --app-path=/opt/Gui-Guider/resources/app.asar --no-sandbox --no-zygote --lang=ru --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --time-ticks-at-unix-epoch=-1711006338184686 --launch-time-ticks=504345765 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=0,i,18443500818739793339,17462978672090662879,131072 --disable-features=SpareRendererForSitePerProcess --enable-crashpad
  ******************************************************************************/
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
