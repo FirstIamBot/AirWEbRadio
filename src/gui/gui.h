@@ -5,6 +5,11 @@
 extern "C" {
 #endif
 
+#include "custom.h"
+#include "gui_guider.h"
+#include "events_init.h"
+
+//extern Data_GUI_Air xReceivedGUItoSI4735;
 
 void gui_meter(void);
 void gui_bar(void);

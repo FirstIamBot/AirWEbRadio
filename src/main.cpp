@@ -13,7 +13,7 @@
 //#include "Free_Fonts.h"
 #include "Task_TFT.h"
 #include "Task_radio.h"
-
+#include "gui/gui.h"
 /************************************************************************************************
     Define prototip Task
 *************************************************************************************************/
@@ -24,9 +24,11 @@ void Task_Radio(void *pvParameters);
 // Define Semaphore
 SemaphoreHandle_t xSemaphoreSPI = NULL;
 // Define Queue
-QueueHandle_t xQueue;
-
-
+QueueHandle_t xQueueGUItoSI4735;
+QueueHandle_t xQueueSI4735toGUI;
+/************************************************************************************************
+ * 
+*************************************************************************************************/
 
 #if CONFIG_FREERTOS_UNICORE
     static const BaseType_t app_cpu = 0;
@@ -43,7 +45,9 @@ void setup(){
 
     xSemaphoreSPI = xSemaphoreCreateMutex();
     /* Создаем очередь на 5 элементов. */
-    xQueue = xQueueCreate( 5, sizeof( int32_t ) );
+    xQueueGUItoSI4735 = xQueueCreate( 5, sizeof( Data_GUI_Air ) );
+    xQueueSI4735toGUI = xQueueCreate( 5, sizeof( int32_t ) );
+
     if( xSemaphoreSPI == NULL )
     {
        Serial.println("Error handle mutex\n");
@@ -53,7 +57,7 @@ void setup(){
         Serial.printf("Handle mutex xSemaphoreSPI = %d\n", xSemaphoreSPI);Serial.println("!!!");
     }
 
-	if( xQueue != NULL )
+	if( xQueueGUItoSI4735 != NULL && xQueueSI4735toGUI != NULL )
 	{
         //xTaskCreatePinnedToCore( printValues, "Print ADC Values", 1536,  NULL, 3, NULL, app_cpu );
         //xTaskCreatePinnedToCore( Task_Encoder, " Encoder", 1000,  NULL, 2, NULL, app_cpu );
@@ -62,9 +66,8 @@ void setup(){
         xTaskCreatePinnedToCore( Task_WebRadio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
 		vTaskStartScheduler();
 	}
-
-   
-    Serial.println("\n*** All Tasks Created ***\n");        // Critical Section
+    
+    Serial.println("\n*** All Tasks Created and Queue  ***\n");        // Critical Section
 
 }
 

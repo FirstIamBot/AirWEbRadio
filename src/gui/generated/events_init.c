@@ -17,12 +17,8 @@
 
 
 #include "custom.h"
-uint8_t GUI_bandIdx;
-#include "custom.h"
+Data_GUI_Air xReceivedGUItoSI4735;
 int slider_vol;
-uint8_t GUI_BandWFMIdx;
-uint8_t GUI_ModIdx;
-uint8_t GUI_StepFMIdx;
 static void pageStatic_btn_next_page_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
@@ -67,30 +63,62 @@ static void pageAirradio_event_handler (lv_event_t *e)
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		lv_obj_add_flag(guider_ui.pageAirradio_cont_BandFM, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_add_flag(guider_ui.pageAirradio_btnm_BandFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_BandWFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_BandWFM, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(guider_ui.pageAirradio_cont_Mod, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(guider_ui.pageAirradio_btnm_Mob, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(guider_ui.pageAirradio_cont_StepFM, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(guider_ui.pageAirradio_btnm_StepFM, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(guider_ui.pageAirradio_cont_vol, LV_OBJ_FLAG_HIDDEN);
 		lv_obj_add_flag(guider_ui.pageAirradio_slider_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_textprogress_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_BandWAM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_BandWSSB, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_BandWAM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_cont_StepAM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_add_flag(guider_ui.pageAirradio_btnm_StepAM, LV_OBJ_FLAG_HIDDEN);
+		xReceivedGUItoSI4735.State = false;
 		break;
 	}
 	default:
 		break;
 	}
 }
-static void pageAirradio_btn_vol_event_handler (lv_event_t *e)
+static void pageAirradio_spangroup_WB_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		lv_obj_clear_flag(guider_ui.pageAirradio_cont_vol, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(guider_ui.pageAirradio_slider_vol, LV_OBJ_FLAG_HIDDEN);
-		lv_obj_clear_flag(guider_ui.pageAirradio_textprogress_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_set_style_border_color(guider_ui.pageAirradio_cont_BandWFM, lv_color_hex(0x000000), LV_PART_MAIN);
+		lv_obj_clear_flag(guider_ui.pageAirradio_cont_BandWFM, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(guider_ui.pageAirradio_btnm_BandWFM, LV_OBJ_FLAG_HIDDEN);
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_down_step_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		xReceivedGUItoSI4735.eDataDescription = eStepDown;
+	xReceivedGUItoSI4735.ucValue = 1;
+		break;
+	}
+	case LV_EVENT_PRESSED:
+	{
+		lv_obj_set_style_opa(guider_ui.pageAirradio_down_step, 136, LV_PART_MAIN);
+		break;
+	}
+	case LV_EVENT_RELEASED:
+	{
+		lv_obj_set_style_opa(guider_ui.pageAirradio_down_step, 255, LV_PART_MAIN);
 		break;
 	}
 	default:
@@ -109,23 +137,30 @@ static void pageAirradio_btnm_Main_event_handler (lv_event_t *e)
 		switch(id) {
 		case 0:
 		{
-			GUI_bandIdx = 0;
+			xReceivedGUItoSI4735.eDataDescription = ebandIDx;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
-			GUI_bandIdx = 1;
+			xReceivedGUItoSI4735.eDataDescription = ebandIDx;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
-			GUI_bandIdx = 2;
+			xReceivedGUItoSI4735.eDataDescription = ebandIDx;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
-			GUI_bandIdx = 3;
-		
+			xReceivedGUItoSI4735.eDataDescription = ebandIDx;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 4:
@@ -136,8 +171,8 @@ static void pageAirradio_btnm_Main_event_handler (lv_event_t *e)
 		}
 		case 5:
 		{
-			lv_obj_clear_flag(guider_ui.pageAirradio_cont_BandFM, LV_OBJ_FLAG_HIDDEN);
-			lv_obj_clear_flag(guider_ui.pageAirradio_btnm_BandFM, LV_OBJ_FLAG_HIDDEN);
+			lv_obj_clear_flag(guider_ui.pageAirradio_cont_BandWFM, LV_OBJ_FLAG_HIDDEN);
+			lv_obj_clear_flag(guider_ui.pageAirradio_btnm_BandWFM, LV_OBJ_FLAG_HIDDEN);
 			break;
 		}
 		case 6:
@@ -155,36 +190,32 @@ static void pageAirradio_btnm_Main_event_handler (lv_event_t *e)
 		break;
 	}
 }
-static void pageAirradio_slider_vol_event_handler (lv_event_t *e)
-{
-	lv_event_code_t code = lv_event_get_code(e);
-
-	switch (code) {
-	case LV_EVENT_VALUE_CHANGED:
-	{
-		slider_vol = lv_slider_get_value(guider_ui.pageAirradio_slider_vol);
-	lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, slider_vol);
-		break;
-	}
-	default:
-		break;
-	}
-}
-static void pageAirradio_btn_1_event_handler (lv_event_t *e)
+static void pageAirradio_up_step_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
 	switch (code) {
 	case LV_EVENT_CLICKED:
 	{
-		ui_load_scr_animation(&guider_ui, &guider_ui.pageStatic, guider_ui.pageStatic_del, &guider_ui.pageAirradio_del, setup_scr_pageStatic, LV_SCR_LOAD_ANIM_NONE, 200, 200, false, true);
+		xReceivedGUItoSI4735.eDataDescription = eStepUP;
+	xReceivedGUItoSI4735.ucValue = 1;
+		break;
+	}
+	case LV_EVENT_RELEASED:
+	{
+		lv_obj_set_style_opa(guider_ui.pageAirradio_up_step, 255, LV_PART_MAIN);
+		break;
+	}
+	case LV_EVENT_PRESSING:
+	{
+		lv_obj_set_style_opa(guider_ui.pageAirradio_up_step, 126, LV_PART_MAIN);
 		break;
 	}
 	default:
 		break;
 	}
 }
-static void pageAirradio_btnm_BandFM_event_handler (lv_event_t *e)
+static void pageAirradio_btnm_StepAM_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
@@ -196,71 +227,30 @@ static void pageAirradio_btnm_BandFM_event_handler (lv_event_t *e)
 		switch(id) {
 		case 0:
 		{
-			GUI_BandWFMIdx = 0;
+			xReceivedGUItoSI4735.eDataDescription = eStepAM;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
-			GUI_BandWFMIdx = 1;
+			xReceivedGUItoSI4735.eDataDescription = eStepAM;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
-			GUI_BandWFMIdx = 2;
+			xReceivedGUItoSI4735.eDataDescription = eStepAM;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
-			GUI_BandWFMIdx = 3;
-			break;
-		}
-		case 4:
-		{
-			GUI_BandWFMIdx = 4;
-			break;
-		}
-		default:
-			break;
-		}
-		break;
-	}
-	default:
-		break;
-	}
-}
-static void pageAirradio_btnm_Mob_event_handler (lv_event_t *e)
-{
-	lv_event_code_t code = lv_event_get_code(e);
-
-	switch (code) {
-	case LV_EVENT_CLICKED:
-	{
-		lv_obj_t * obj = lv_event_get_target(e);
-		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
-		switch(id) {
-		case 0:
-		{
-			GUI_ModIdx = 0;
-			break;
-		}
-		case 1:
-		{
-			GUI_ModIdx = 1;
-			break;
-		}
-		case 2:
-		{
-			GUI_ModIdx = 2;
-			break;
-		}
-		case 3:
-		{
-			GUI_ModIdx = 3;
-			break;
-		}
-		case 4:
-		{
-			GUI_ModIdx = 4;
+			xReceivedGUItoSI4735.eDataDescription = eStepAM;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -284,22 +274,30 @@ static void pageAirradio_btnm_StepFM_event_handler (lv_event_t *e)
 		switch(id) {
 		case 0:
 		{
-			GUI_StepFMIdx = 0;
+			xReceivedGUItoSI4735.eDataDescription = eStepFM;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
-			GUI_StepFMIdx = 1;
+			xReceivedGUItoSI4735.eDataDescription = eStepFM;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
-			GUI_StepFMIdx = 2;
+			xReceivedGUItoSI4735.eDataDescription = eStepFM;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
-			GUI_StepFMIdx = 3;
+			xReceivedGUItoSI4735.eDataDescription = eStepFM;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -311,16 +309,305 @@ static void pageAirradio_btnm_StepFM_event_handler (lv_event_t *e)
 		break;
 	}
 }
+static void pageAirradio_btnm_BandWFM_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWFM;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 1:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWFM;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 2:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWFM;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 3:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWFM;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 4:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWFM;
+		xReceivedGUItoSI4735.ucValue = 4;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_btnm_BandWSSB_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWSSB;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 1:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWSSB;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 2:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWSSB;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 3:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWSSB;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 4:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWSSB;
+		xReceivedGUItoSI4735.ucValue = 4;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 5:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWSSB;
+		xReceivedGUItoSI4735.ucValue = 5;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_btnm_BandWAM_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWAM;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 1:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWAM;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 2:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWAM;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 3:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWAM;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 4:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWAM;
+		xReceivedGUItoSI4735.ucValue = 4;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 5:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eBandWAM;
+		xReceivedGUItoSI4735.ucValue = 5;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_slider_vol_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_VALUE_CHANGED:
+	{
+		slider_vol = lv_slider_get_value(guider_ui.pageAirradio_slider_vol);
+	lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, slider_vol);
+	xReceivedGUItoSI4735.eDataDescription = eslider_vol;
+	xReceivedGUItoSI4735.ucValue = slider_vol;
+	xReceivedGUItoSI4735.State = true;
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_btnm_Mob_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_t * obj = lv_event_get_target(e);
+		uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+		switch(id) {
+		case 0:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eModIdx;
+		xReceivedGUItoSI4735.ucValue = 0;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 1:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eModIdx;
+		xReceivedGUItoSI4735.ucValue = 1;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 2:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eModIdx;
+		xReceivedGUItoSI4735.ucValue = 2;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 3:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eModIdx;
+		xReceivedGUItoSI4735.ucValue = 3;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		case 4:
+		{
+			xReceivedGUItoSI4735.eDataDescription = eModIdx;
+		xReceivedGUItoSI4735.ucValue = 4;
+		xReceivedGUItoSI4735.State = true;
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_spangroup_Step_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		
+		lv_obj_clear_flag(guider_ui.pageAirradio_cont_StepFM, LV_OBJ_FLAG_HIDDEN);
+		// if idBand == FM 
+	// idStepFM Show, idStepAM Hide
+	// else idStepAM Show, idShowFM Hide
+		lv_obj_clear_flag(guider_ui.pageAirradio_btnm_StepFM, LV_OBJ_FLAG_HIDDEN);
+		break;
+	}
+	default:
+		break;
+	}
+}
+static void pageAirradio_imgbtn_1_event_handler (lv_event_t *e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	switch (code) {
+	case LV_EVENT_CLICKED:
+	{
+		lv_obj_clear_flag(guider_ui.pageAirradio_cont_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(guider_ui.pageAirradio_slider_vol, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(guider_ui.pageAirradio_textprogress_vol, LV_OBJ_FLAG_HIDDEN);
+		break;
+	}
+	default:
+		break;
+	}
+}
 void events_init_pageAirradio(lv_ui *ui)
 {
 	lv_obj_add_event_cb(ui->pageAirradio, pageAirradio_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageAirradio_btn_vol, pageAirradio_btn_vol_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_spangroup_WB, pageAirradio_spangroup_WB_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_down_step, pageAirradio_down_step_event_handler, LV_EVENT_ALL, NULL);
 	lv_obj_add_event_cb(ui->pageAirradio_btnm_Main, pageAirradio_btnm_Main_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageAirradio_slider_vol, pageAirradio_slider_vol_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageAirradio_btn_1, pageAirradio_btn_1_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageAirradio_btnm_BandFM, pageAirradio_btnm_BandFM_event_handler, LV_EVENT_ALL, NULL);
-	lv_obj_add_event_cb(ui->pageAirradio_btnm_Mob, pageAirradio_btnm_Mob_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_up_step, pageAirradio_up_step_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_StepAM, pageAirradio_btnm_StepAM_event_handler, LV_EVENT_ALL, NULL);
 	lv_obj_add_event_cb(ui->pageAirradio_btnm_StepFM, pageAirradio_btnm_StepFM_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_BandWFM, pageAirradio_btnm_BandWFM_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_BandWSSB, pageAirradio_btnm_BandWSSB_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_BandWAM, pageAirradio_btnm_BandWAM_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_slider_vol, pageAirradio_slider_vol_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_btnm_Mob, pageAirradio_btnm_Mob_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_spangroup_Step, pageAirradio_spangroup_Step_event_handler, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(ui->pageAirradio_imgbtn_1, pageAirradio_imgbtn_1_event_handler, LV_EVENT_ALL, NULL);
 }
 
 void events_init(lv_ui *ui)

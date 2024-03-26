@@ -14,6 +14,28 @@ extern "C" {
 #endif
 
 #include "gui_guider.h"
+typedef enum
+{
+    ebandIDx = 1,
+    eModIdx = 2,
+    eStepFM = 3,
+    eStepAM = 4,
+    eBandWFM = 5,
+    eBandWAM = 6,
+    eBandWSSB = 7,
+    eStepUP = 8,
+    eStepDown = 9,
+    eRSSI = 10,
+    eSNR = 11,
+    eslider_vol = 12
+} DataDescription_t;
+// Структура данных помещаемых в очередь
+typedef struct
+{
+    bool State;
+    int ucValue;
+    DataDescription_t eDataDescription;
+} Data_GUI_Air;
 
 void custom_init(lv_ui *ui);
 

@@ -1,1 +1,1 @@
-GEN_CSRCS += _nxp60_alpha_40x28.c
+GEN_CSRCS += _nxp60_alpha_40x28.c _vol_alpha_43x46.c

@@ -23,7 +23,7 @@
 /**********************
  *   DEFINES
  **********************/
-#define LV_TICK_PERIOD_MS 10
+#define LV_TICK_PERIOD_MS 30
 //********************************     Rotary Encoder    ******************************
 #define ROTARY_ENCODER_A_PIN      3  // CLK(А)     синий   25 
 #define ROTARY_ENCODER_B_PIN      1  // DT(В)      зелёный 26
@@ -69,11 +69,6 @@ static int32_t encoder_diff;
 static lv_indev_state_t encoder_state;
 
 //######################## Extern variable from GUI  ###################################
-extern uint8_t GUI_bandIdx;
-extern uint8_t GUI_ModIdx;
-extern uint8_t GUI_StepFMIdx;
-extern uint8_t GUI_BandWFMIdx;
-extern int slider_vol;
 
 //######################################################################################
 static const uint16_t screenWidth  = 320;
@@ -82,9 +77,13 @@ TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[ screenWidth * screenHeight / 10 ];
-
+extern Data_GUI_Air xReceivedGUItoSI4735;
+//######################################################################################
 extern SemaphoreHandle_t xSemaphoreSPI;
 
+extern QueueHandle_t xQueueGUItoSI4735;
+extern QueueHandle_t xQueueSI4735toGUI;
+//######################################################################################
 #if LV_USE_LOG != 0
 /* Serial debugging */
 void my_print(const char * buf)
@@ -97,12 +96,6 @@ void my_print(const char * buf)
 void Task_TFT(void *pvParameters) 
 {
     (void)pvParameters;
-    
-    static uint8_t last_GUI_bandIdx;
-    static uint8_t last_GUI_ModIdx;
-    static uint8_t last_GUI_StepFMIdx;
-    static uint8_t last_GUI_BandWFMIdx;
-    static uint8_t last_slider_vol;
 
     Serial.begin( 115200 ); /* prepare for possible serial debug */
 
@@ -111,7 +104,6 @@ void Task_TFT(void *pvParameters)
 
     Serial.println( LVGL_Arduino );
     Serial.println( "I am LVGL_Arduino" );
-
 
     /*  
     initTFT();
@@ -124,42 +116,40 @@ void Task_TFT(void *pvParameters)
     initCalTFT();
 
     Serial.println( "Hello LVGL" );
-
+    
     while (1) // A Task shall never return or exit.
     {
-        /* Delay 1 tick (assumes FreeRTOS tick is 10ms */
-        vTaskDelay(pdMS_TO_TICKS(10));
+        
 
-        /* Try to take the semaphore, call lvgl related function on success 
-       if (pdTRUE == xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY)) {
+        /* Delay 1 tick (assumes FreeRTOS tick is 10ms */
+        //vTaskDelay(pdMS_TO_TICKS(10));
+        /* Try to take the semaphore, call lvgl related function on success  */
+
+        if (pdTRUE == xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY)) {
             lv_task_handler();
             lv_tick_inc(LV_TICK_PERIOD_MS);
             xSemaphoreGive(xSemaphoreSPI);
-       }*/
-       xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);
-       if(last_GUI_bandIdx != GUI_bandIdx){
-            Serial.print("GUI_bandIdx = ");Serial.println(GUI_bandIdx);
-            last_GUI_bandIdx = GUI_bandIdx;
-       }
-       if(last_GUI_ModIdx != GUI_ModIdx){
-            Serial.print("GUI_ModIdx = ");Serial.println(GUI_ModIdx);
-            last_GUI_ModIdx = GUI_ModIdx;
-       }
-       if(last_GUI_StepFMIdx != GUI_StepFMIdx){
-            Serial.print("GUI_StepFMIdx = ");Serial.println(GUI_StepFMIdx);
-            last_GUI_StepFMIdx = GUI_StepFMIdx;
-       }
-       if(last_GUI_BandWFMIdx != GUI_BandWFMIdx){
-            Serial.print("GUI_BandWFMIdx = ");Serial.println(GUI_BandWFMIdx);
-            last_GUI_BandWFMIdx = GUI_BandWFMIdx;
-       }
-       if(last_slider_vol != slider_vol){
-            Serial.print("GUI_BandWFMIdx = ");Serial.println(slider_vol);
-            last_slider_vol = slider_vol;
-       }
-       lv_task_handler();
-       lv_tick_inc(LV_TICK_PERIOD_MS);
-       xSemaphoreGive(xSemaphoreSPI);
+        }
+        else{
+            Serial.println("Semaphore dont Take ");
+        }
+        if(xReceivedGUItoSI4735.State == true)
+        {
+		    if( xQueueSend( xQueueGUItoSI4735, &xReceivedGUItoSI4735, portMAX_DELAY ) != pdPASS )
+            // if( xQueueSend( xQueueGUItoSI4735, &xReceivedGUItoSI4735, 500 ) != pdPASS ) 
+		    {
+                Serial.println("We could not write to the queue because it was full  this must\
+                            be an error as the queue should never contain more than one item!");
+		    }
+            xReceivedGUItoSI4735.State = false;
+        }
+
+/*
+        xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);
+        lv_task_handler();
+        lv_tick_inc(LV_TICK_PERIOD_MS);
+        xSemaphoreGive(xSemaphoreSPI);
+*/
     }
 }
 

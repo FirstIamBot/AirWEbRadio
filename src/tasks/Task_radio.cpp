@@ -7,12 +7,13 @@
 #include "SI4735.h"
 //#include "patch_init.h"    // SSB patch for whole SSBRX initialization string
 #include "patch_full.h"    // SSB patch for whole SSBRX full download
+const uint16_t size_content = sizeof ssb_patch_content; // see ssb_patch_content in patch_full.h or patch_init.h
 
-#include "lvgl_touch_calibration/esp_nvs_tc.h"
+#include "custom.h"
 
 #define EuroAsiabandplan
 
-const uint16_t size_content = sizeof ssb_patch_content; // see ssb_patch_content in patch_full.h or patch_init.h
+
 
 #define ESP32_I2C_SDA    21  // I2C bus pin on ESP32
 #define ESP32_I2C_SCL    22  // I2C bus pin on ESP32
@@ -29,7 +30,6 @@ const uint16_t size_content = sizeof ssb_patch_content; // see ssb_patch_content
 #define MW_BAND_TYPE 1
 #define SW_BAND_TYPE 2
 #define LW_BAND_TYPE 3
-
 
 //===========================================++++=== Bandwidth AM, SSB, FM     ===============================+
 const char *bandwidthSSB[] = {"0.5",  "1.0","1.2", "2.2", "3.0", "4.0"};
@@ -285,7 +285,7 @@ StoreStruct storage = {
 };
 
 
-
+extern QueueHandle_t xQueueGUItoSI4735;;
 
 //=============================================================================================================
 SI4735 si4735;          // Init resiver SI4735
@@ -332,16 +332,80 @@ void initRadio(void)
 void Task_Radio(void *pvParameters)
 {   
     (void)pvParameters;
+	BaseType_t xStatus;
+	Data_GUI_Air xReceivedGUIfromSI4735;
     Serial.println("Start Task Radio.");
-
+	
+	uint16_t XZ; //Так для пробы
+	static uint16_t lastXZ; //Так для пробы
     initRadio();
     Serial.print("previousFrequency = ");Serial.println(previousFrequency);
     Serial.print("si4735Addr = ");Serial.println(si4735.getDeviceI2CAddress(RESET_PIN), HEX);
     
     while(1)
     {
-        
-        vTaskDelay(1000);
+
+	xStatus = xQueueReceive( xQueueGUItoSI4735, &xReceivedGUIfromSI4735, portMAX_DELAY);
+	//xStatus = xQueueReceive( xQueueGUItoSI4735, &xReceivedGUIfromSI4735, 100);
+	if( xStatus == pdPASS )
+	{
+		switch (xReceivedGUIfromSI4735.eDataDescription)
+		{
+		case ebandIDx:
+			XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eModIdx:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eStepFM:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eStepAM:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eBandWFM:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eBandWAM:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eBandWSSB:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+			case eslider_vol:
+				// 
+				XZ = xReceivedGUIfromSI4735.ucValue;
+				break;
+		default:
+        	break;
+		}
+		Serial.print(xReceivedGUIfromSI4735.eDataDescription);Serial.print(" = ");Serial.println(XZ);
+		if(lastXZ != XZ)
+		{
+			lastXZ == XZ;
+		}
+		}
+	else
+	{
+		// Очередь пуста
+		Serial.println("Queue Empty !!!");
+	}
+  /*
+	si4735.getStatus();  	
+	uint8_t statusSNR = si4735.getStatusSNR();
+	Serial.print("statusSNR = ");Serial.println(statusSNR);
+	uint8_t statusRSSI = si4735.getCurrentRSSI();
+	Serial.print("statusRSSI = ");Serial.println(statusRSSI);
+	uint8_t statusFrequency = si4735.getCurrentFrequency();
+	Serial.print("statusFrequency = ");Serial.println(statusFrequency);
+     */
+    vTaskDelay(200);
     }
 
 }
