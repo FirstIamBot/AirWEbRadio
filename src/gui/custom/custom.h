@@ -16,18 +16,18 @@ extern "C" {
 #include "gui_guider.h"
 typedef enum
 {
-    ebandIDx = 1,
-    eModIdx = 2,
-    eStepFM = 3,
-    eStepAM = 4,
-    eBandWFM = 5,
-    eBandWAM = 6,
-    eBandWSSB = 7,
-    eStepUP = 8,
-    eStepDown = 9,
+    ebandIDx = 1, // Выбор диапазона LW-0,MW-1, Sw-2, FM-3 
+    eModIdx = 2,  // Выбор модуляции AM-0, FM-1, LSB-2, USB-3, SSB-4
+    eStepFM = 3,  // Шаг перестройки FM
+    eStepAM = 4,  // Шаг перестройки AM
+    eBandWFM = 5, // Полоса пропускания FM
+    eBandWAM = 6, // Полоса пропускания AM
+    eBandWSSB = 7,// Полоса пропускания SSB
+    eStepUP = 8,  // Перестройка вверх
+    eStepDown = 9,// Перестройка вниз
     eRSSI = 10,
     eSNR = 11,
-    eslider_vol = 12
+    eslider_vol = 12 // Громкость 
 } DataDescription_t;
 // Структура данных помещаемых в очередь
 typedef struct

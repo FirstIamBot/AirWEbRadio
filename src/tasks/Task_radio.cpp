@@ -392,7 +392,15 @@ void Task_Radio(void *pvParameters)
 					// 
 					XZ = xReceivedGUIfromSI4735.ucValue;
 					break;
-				case eslider_vol:
+        case eStepUP:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+        case eStepDown:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+        case eslider_vol:
 					// 
 					XZ = xReceivedGUIfromSI4735.ucValue;
 					break;
