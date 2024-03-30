@@ -37,8 +37,6 @@ typedef struct
 	lv_obj_t *pageAirradio_down_step;
 	lv_obj_t *pageAirradio_down_step_label;
 	lv_obj_t *pageAirradio_btnm_Main;
-	lv_obj_t *pageAirradio_up_step;
-	lv_obj_t *pageAirradio_up_step_label;
 	lv_obj_t *pageAirradio_cont_StepAM;
 	lv_obj_t *pageAirradio_btnm_StepAM;
 	lv_obj_t *pageAirradio_cont_StepFM;
@@ -59,6 +57,8 @@ typedef struct
 	lv_obj_t *pageAirradio_spangroup_SNR;
 	lv_obj_t *pageAirradio_imgbtn_1;
 	lv_obj_t *pageAirradio_imgbtn_1_label;
+	lv_obj_t *pageAirradio_up_step;
+	lv_obj_t *pageAirradio_up_step_label;
 }lv_ui;
 
 typedef void (*ui_setup_scr_t)(lv_ui * ui);

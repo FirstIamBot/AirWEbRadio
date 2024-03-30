@@ -307,6 +307,18 @@ void VS1053::switchToMp3Mode() {
     LOG("Switched to mp3 mode\n");
     softReset();
 }
+/**
+ * An optional switch.
+ * Плагин для переключения на линейный вход 
+ */
+void VS1053::switchToAdmix3Mode() {
+    writeRegister(SCI_MODE, _BV(SM_LINE1)); // Выключение Микрофона
+    wram_write(SCI_AICTRL0, 0xfffd); // Установка громкости -3 Дб, возможна регулировка до -31 Дб
+    delayRTOS(100);
+    LOG("Switched to AdMix mode\n");
+    softReset();
+     wram_write(SCI_AIADDR, 0x0f00); //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
+}
 
 /**
  * A lightweight method to check if VS1053 is correctly wired up (power supply and connection to SPI interface).
@@ -399,4 +411,8 @@ void VS1053::loadUserCode(const unsigned short* plugin) {
  */
 void VS1053::loadDefaultVs1053Patches() {
    loadUserCode(PATCHES);
+};
+
+void VS1053::loadAdmixVs1053Patches() {
+   loadUserCode(PATCHES_ADMIX_STEREO);
 };

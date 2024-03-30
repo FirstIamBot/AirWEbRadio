@@ -39,6 +39,12 @@
 #include "ConsoleLogger.h"
 
 #include "patches/vs1053b-patches.plg"
+#include "patches/admix-stereo.plg"
+#include "patches/admix-mono.plg"
+//#include "patches/admix-left.plg"
+//#include "patches/admix-right.plg"
+//#include "patches/admix-swap.plg"
+
 
 class VS1053 {
 private:
@@ -180,6 +186,8 @@ public:
 
     // Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
+    void loadAdmixVs1053Patches();
+    void switchToAdmix3Mode();
 };
 
 #endif

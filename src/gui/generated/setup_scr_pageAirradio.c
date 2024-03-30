@@ -186,26 +186,6 @@ void setup_scr_pageAirradio(lv_ui *ui)
 	lv_obj_set_style_bg_grad_dir(ui->pageAirradio_btnm_Main, LV_GRAD_DIR_NONE, LV_PART_ITEMS|LV_STATE_DEFAULT);
 	lv_obj_set_style_shadow_width(ui->pageAirradio_btnm_Main, 0, LV_PART_ITEMS|LV_STATE_DEFAULT);
 
-	//Write codes pageAirradio_up_step
-	ui->pageAirradio_up_step = lv_btn_create(ui->pageAirradio);
-	ui->pageAirradio_up_step_label = lv_label_create(ui->pageAirradio_up_step);
-	lv_label_set_text(ui->pageAirradio_up_step_label, ">");
-	lv_label_set_long_mode(ui->pageAirradio_up_step_label, LV_LABEL_LONG_WRAP);
-	lv_obj_align(ui->pageAirradio_up_step_label, LV_ALIGN_CENTER, 0, 0);
-	lv_obj_set_style_pad_all(ui->pageAirradio_up_step, 0, LV_STATE_DEFAULT);
-	lv_obj_set_pos(ui->pageAirradio_up_step, 217, 78);
-	lv_obj_set_size(ui->pageAirradio_up_step, 38, 26);
-
-	//Write style for pageAirradio_up_step, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
-	lv_obj_set_style_bg_opa(ui->pageAirradio_up_step, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(ui->pageAirradio_up_step, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_radius(ui->pageAirradio_up_step, 44, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_shadow_width(ui->pageAirradio_up_step, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_text_color(ui->pageAirradio_up_step, lv_color_hex(0x1b614f), LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(ui->pageAirradio_up_step, &lv_font_Antonio_Regular_19, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_text_opa(ui->pageAirradio_up_step, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
-	lv_obj_set_style_text_align(ui->pageAirradio_up_step, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
-
 	//Write codes pageAirradio_cont_StepAM
 	ui->pageAirradio_cont_StepAM = lv_obj_create(ui->pageAirradio);
 	lv_obj_set_pos(ui->pageAirradio_cont_StepAM, 5, 16);
@@ -232,7 +212,7 @@ void setup_scr_pageAirradio(lv_ui *ui)
 	ui->pageAirradio_btnm_StepAM = lv_btnmatrix_create(ui->pageAirradio_cont_StepAM);
 	static const char *pageAirradio_btnm_StepAM_text_map[] = {"1", "\n", "5", "\n", "8", "\n", "10", "",};
 	lv_btnmatrix_set_map(ui->pageAirradio_btnm_StepAM, pageAirradio_btnm_StepAM_text_map);
-	lv_obj_set_pos(ui->pageAirradio_btnm_StepAM, 7, 10);
+	lv_obj_set_pos(ui->pageAirradio_btnm_StepAM, 5, 10);
 	lv_obj_set_size(ui->pageAirradio_btnm_StepAM, 59, 159);
 	lv_obj_add_flag(ui->pageAirradio_btnm_StepAM, LV_OBJ_FLAG_HIDDEN);
 
@@ -350,7 +330,6 @@ void setup_scr_pageAirradio(lv_ui *ui)
 	lv_btnmatrix_set_map(ui->pageAirradio_btnm_BandWFM, pageAirradio_btnm_BandWFM_text_map);
 	lv_obj_set_pos(ui->pageAirradio_btnm_BandWFM, 6, 8);
 	lv_obj_set_size(ui->pageAirradio_btnm_BandWFM, 48, 167);
-	lv_obj_add_flag(ui->pageAirradio_btnm_BandWFM, LV_OBJ_FLAG_HIDDEN);
 
 	//Write style for pageAirradio_btnm_BandWFM, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
 	lv_obj_set_style_border_width(ui->pageAirradio_btnm_BandWFM, 1, LV_PART_MAIN|LV_STATE_DEFAULT);
@@ -406,10 +385,11 @@ void setup_scr_pageAirradio(lv_ui *ui)
 
 	//Write codes pageAirradio_btnm_BandWSSB
 	ui->pageAirradio_btnm_BandWSSB = lv_btnmatrix_create(ui->pageAirradio_cont_BandWSSB);
-	static const char *pageAirradio_btnm_BandWSSB_text_map[] = {"4.0", "\n", "3.0", "\n", "2.2", "\n", "1.2", "\n", "1.0", "\n", "0.5", "",};
+	static const char *pageAirradio_btnm_BandWSSB_text_map[] = {"1.2", "\n", "2.2", "\n", "3.0", "\n", "4.0", "\n", "500", "\n", "1.0", "",};
 	lv_btnmatrix_set_map(ui->pageAirradio_btnm_BandWSSB, pageAirradio_btnm_BandWSSB_text_map);
-	lv_obj_set_pos(ui->pageAirradio_btnm_BandWSSB, 6, 8);
+	lv_obj_set_pos(ui->pageAirradio_btnm_BandWSSB, 7, 9);
 	lv_obj_set_size(ui->pageAirradio_btnm_BandWSSB, 48, 167);
+	lv_obj_add_flag(ui->pageAirradio_btnm_BandWSSB, LV_OBJ_FLAG_HIDDEN);
 
 	//Write style for pageAirradio_btnm_BandWSSB, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
 	lv_obj_set_style_border_width(ui->pageAirradio_btnm_BandWSSB, 1, LV_PART_MAIN|LV_STATE_DEFAULT);
@@ -465,7 +445,7 @@ void setup_scr_pageAirradio(lv_ui *ui)
 
 	//Write codes pageAirradio_btnm_BandWAM
 	ui->pageAirradio_btnm_BandWAM = lv_btnmatrix_create(ui->pageAirradio_cont_BandWAM);
-	static const char *pageAirradio_btnm_BandWAM_text_map[] = {"6", "\n", "3", "\n", "2.5", "\n", "2.0", "\n", "1.8", "\n", "1", "",};
+	static const char *pageAirradio_btnm_BandWAM_text_map[] = {"6", "\n", "4", "\n", "3", "\n", "2", "\n", "1", "\n", "1.8", "\n", "2.5", "",};
 	lv_btnmatrix_set_map(ui->pageAirradio_btnm_BandWAM, pageAirradio_btnm_BandWAM_text_map);
 	lv_obj_set_pos(ui->pageAirradio_btnm_BandWAM, 6, 8);
 	lv_obj_set_size(ui->pageAirradio_btnm_BandWAM, 48, 167);
@@ -789,6 +769,26 @@ void setup_scr_pageAirradio(lv_ui *ui)
 
 	//Write style for pageAirradio_imgbtn_1, Part: LV_PART_MAIN, State: LV_IMGBTN_STATE_RELEASED.
 	lv_obj_set_style_img_opa(ui->pageAirradio_imgbtn_1, 255, LV_PART_MAIN|LV_IMGBTN_STATE_RELEASED);
+
+	//Write codes pageAirradio_up_step
+	ui->pageAirradio_up_step = lv_btn_create(ui->pageAirradio);
+	ui->pageAirradio_up_step_label = lv_label_create(ui->pageAirradio_up_step);
+	lv_label_set_text(ui->pageAirradio_up_step_label, ">");
+	lv_label_set_long_mode(ui->pageAirradio_up_step_label, LV_LABEL_LONG_WRAP);
+	lv_obj_align(ui->pageAirradio_up_step_label, LV_ALIGN_CENTER, 0, 0);
+	lv_obj_set_style_pad_all(ui->pageAirradio_up_step, 0, LV_STATE_DEFAULT);
+	lv_obj_set_pos(ui->pageAirradio_up_step, 217, 78);
+	lv_obj_set_size(ui->pageAirradio_up_step, 38, 26);
+
+	//Write style for pageAirradio_up_step, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
+	lv_obj_set_style_bg_opa(ui->pageAirradio_up_step, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_border_width(ui->pageAirradio_up_step, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_radius(ui->pageAirradio_up_step, 44, LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_shadow_width(ui->pageAirradio_up_step, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_text_color(ui->pageAirradio_up_step, lv_color_hex(0x1b614f), LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(ui->pageAirradio_up_step, &lv_font_Antonio_Regular_19, LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_text_opa(ui->pageAirradio_up_step, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
+	lv_obj_set_style_text_align(ui->pageAirradio_up_step, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN|LV_STATE_DEFAULT);
 
 	//The custom code of pageAirradio.
 	

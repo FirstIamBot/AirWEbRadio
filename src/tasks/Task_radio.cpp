@@ -161,6 +161,7 @@ uint8_t stepIdx;
 uint8_t bwIdx;
 
 uint16_t previousFrequency;
+uint16_t currentFrequency;
 uint8_t currentBFOStep     = 25;
 uint8_t currentStepIdx     = 1;
 
@@ -176,7 +177,7 @@ uint8_t snr = 0;
 uint8_t stereo = 1;
 uint8_t volume = 50;
 
-uint8_t currentVOL         =  85;
+uint8_t currentVOL         =  95;
 uint8_t previousVOL        =  0;
 uint8_t currentVOLStep     =  1;
 
@@ -286,20 +287,47 @@ StoreStruct storage = {
 
 
 extern QueueHandle_t xQueueGUItoSI4735;;
-
+int16_t si4735Addr ;
 //=============================================================================================================
 SI4735 si4735;          // Init resiver SI4735
 #define RESET_PIN 12
 //=============================================================================================================
+//#############################################################################################################
+// Show current frequency
+void showStatus()
+{
+	si4735.getStatus();
+	si4735.getCurrentReceivedSignalQuality();
+	Serial.print("You are tuned on ");
+	if (si4735.isCurrentTuneFM())
+	{
+		//currentFrequency = si4735.getFrequency();
+		Serial.print(String(currentFrequency / 100.0, 2));
+		Serial.print("MHz ");
+		Serial.print((si4735.getCurrentPilot()) ? "STEREO" : "MONO");
+	}
+	else
+	{
+		Serial.print(currentFrequency);
+		Serial.print("kHz");
+	}
+	Serial.print(" [SNR:");
+	Serial.print(si4735.getCurrentSNR());
+	Serial.print("dB");
 
+	Serial.print(" Signal:");
+	Serial.print(si4735.getCurrentRSSI());
+	Serial.println("dBuV]");
+	
+	si4735Addr = si4735.getDeviceI2CAddress(RESET_PIN);
+    Serial.print("si4735Addr = ");Serial.println(si4735Addr, HEX);
+}
+//###############################################################################################################
 void initRadio(void)
 {
-  Serial.println("Init Si4735 !");
-
+	
 
     digitalWrite(RESET_PIN, HIGH);
-  
-    Serial.println("AM and FM station tuning test.");
 
     // The line below may be necessary to setup I2C pins on ESP32
     Wire.begin(ESP32_I2C_SDA, ESP32_I2C_SCL);
@@ -307,105 +335,83 @@ void initRadio(void)
     delay(500);
     si4735.setup(RESET_PIN, 0);
     // Starts defaul radio function and band (FM; from 84 to 108 MHz; 103.9 MHz; step 100kHz)
-    si4735.setFM(8400, 10800, 10390, 10);
+    si4735.setFM(8400, 10800, 10360, 10);
     delay(500);
-    si4735.setVolume(55);
-      
-    int16_t si4735Addr = si4735.getDeviceI2CAddress(RESET_PIN);
-    //si4735.setAudioMuteMcuPin(AUDIO_MUTE);
-    
+    si4735.setVolume(currentVOL);   
     delay(1500);
+    Serial.println("Init Si4735 !");
+    currentFrequency = previousFrequency = si4735.getFrequency();
 
-    //si4735.setFM();
-    //si4735.setSeekFmSpacing(10);
-    //si4735.setSeekFmLimits(8750, 10800);
-    //si4735.setSeekAmRssiThreshold(50);
-    //si4735.setSeekAmSrnThreshold(20);
-    //si4735.setSeekFmRssiThreshold(5);
-    //si4735.setSeekFmSrnThreshold(5);
-    //si4735.setFrequencyStep(10);
-    previousFrequency = si4735.getFrequency();
-    si4735.setVolume(currentVOL);
-
+    showStatus();
 }
 
 void Task_Radio(void *pvParameters)
 {   
-    (void)pvParameters;
+  (void)pvParameters;
 	BaseType_t xStatus;
 	Data_GUI_Air xReceivedGUIfromSI4735;
-    Serial.println("Start Task Radio.");
-	
+    
+	Serial.println("Start Task Radio.");
 	uint16_t XZ; //Так для пробы
 	static uint16_t lastXZ; //Так для пробы
-    initRadio();
-    Serial.print("previousFrequency = ");Serial.println(previousFrequency);
-    Serial.print("si4735Addr = ");Serial.println(si4735.getDeviceI2CAddress(RESET_PIN), HEX);
+  initRadio();
     
     while(1)
     {
-
-	xStatus = xQueueReceive( xQueueGUItoSI4735, &xReceivedGUIfromSI4735, portMAX_DELAY);
-	//xStatus = xQueueReceive( xQueueGUItoSI4735, &xReceivedGUIfromSI4735, 100);
+		
+	xStatus = xQueueReceive( xQueueGUItoSI4735, &xReceivedGUIfromSI4735, 500);
+	//xStatus = xQueueReceive( xQueueGUItoSI4735, &xReceivedGUIfromSI4735, portMAX_DELAY);
 	if( xStatus == pdPASS )
-	{
-		switch (xReceivedGUIfromSI4735.eDataDescription)
 		{
-		case ebandIDx:
-			XZ = xReceivedGUIfromSI4735.ucValue;
+			switch (xReceivedGUIfromSI4735.eDataDescription)
+			{
+				case ebandIDx:
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eModIdx:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eStepFM:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eStepAM:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eBandWFM:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eBandWAM:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eBandWSSB:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+				case eslider_vol:
+					// 
+					XZ = xReceivedGUIfromSI4735.ucValue;
+					break;
+			default:
 				break;
-			case eModIdx:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-			case eStepFM:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-			case eStepAM:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-			case eBandWFM:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-			case eBandWAM:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-			case eBandWSSB:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-			case eslider_vol:
-				// 
-				XZ = xReceivedGUIfromSI4735.ucValue;
-				break;
-		default:
-        	break;
-		}
-		Serial.print(xReceivedGUIfromSI4735.eDataDescription);Serial.print(" = ");Serial.println(XZ);
-		if(lastXZ != XZ)
+			}
+			Serial.print(xReceivedGUIfromSI4735.eDataDescription);Serial.print(" = ");Serial.println(XZ);
+			if(lastXZ != XZ)
+			{
+				lastXZ == XZ;
+				XZ = 0;
+				showStatus();
+			}
+			}
+		else
 		{
-			lastXZ == XZ;
+			// Очередь пуста
+			Serial.println("Queue Empty !!!");
 		}
-		}
-	else
-	{
-		// Очередь пуста
-		Serial.println("Queue Empty !!!");
-	}
-  /*
-	si4735.getStatus();  	
-	uint8_t statusSNR = si4735.getStatusSNR();
-	Serial.print("statusSNR = ");Serial.println(statusSNR);
-	uint8_t statusRSSI = si4735.getCurrentRSSI();
-	Serial.print("statusRSSI = ");Serial.println(statusRSSI);
-	uint8_t statusFrequency = si4735.getCurrentFrequency();
-	Serial.print("statusFrequency = ");Serial.println(statusFrequency);
-     */
-    vTaskDelay(200);
+    	//vTaskDelay(200);
     }
-
 }

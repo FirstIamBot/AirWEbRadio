@@ -21,6 +21,7 @@
         "patch_full.h": "c",
         "system_error": "c",
         "regex": "c",
-        "gui.h": "c"
+        "gui.h": "c",
+        "*.plg": "cpp"
     }
 }
