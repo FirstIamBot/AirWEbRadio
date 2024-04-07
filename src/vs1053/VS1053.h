@@ -187,7 +187,7 @@ public:
     // Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
     void loadAdmixVs1053Patches();
-    void switchToAdmix3Mode();
+    void switchToAdmixMode();
 };
 
 #endif

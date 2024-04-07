@@ -12,6 +12,12 @@
 //************ VS1053 define constatant **********************
 #define buffLen 1024  // Default bitrate stream 1024,for HD radio bitrate stream 4096
 
+#define WebRadio 0
+#define AirRadio 1
+
+
+uint8_t RadioMode = 1;
+
 uint8_t VOLUME ;      // Volume
 uint8_t TONE ;        // Tone bass/treble (4 nibbles)
 
@@ -30,7 +36,7 @@ void Task_WebRadio(void *pvParameters) // This is a task.
 
     int index = 0;
     //****************************    Web Radio Init    *********************
-    VOLUME = 100;      // Default volume
+    VOLUME = 90;      // Default volume
     TONE = 0x51;      // Default tone bass/treble (4 nibbles)
     // ******************** Setup VS1053 audio codec
     // initialize SPI
@@ -38,14 +44,27 @@ void Task_WebRadio(void *pvParameters) // This is a task.
     Serial.println("Hello VS1053!\n");
     // initialize a player
     player.begin();
-    player.loadDefaultVs1053Patches();
-    player.switchToMp3Mode(); // optional, some boards require this
-    player.setVolume(VOLUME);
 
-    
+    if (RadioMode == WebRadio){ // AirRadio
+      player.loadAdmixVs1053Patches();
+      player.switchToAdmixMode();
+      Serial.println("Switched to mp3 mode");
+    }
+    else{
+      player.loadDefaultVs1053Patches();
+      player.switchToMp3Mode(); // optional, some boards require this
+    }
+    player.setVolume(VOLUME);
+ 
     while (1) // A Task shall never return or exit.
     {
-      loop_vs1053();
+      if (RadioMode == WebRadio){// AirRadio
+        Serial.println("Playing from Adumix");  
+        vTaskDelay(pdMS_TO_TICKS(1000));
+      }
+      else{
+        loop_vs1053();
+      }
     }
 }
 
@@ -57,7 +76,6 @@ void loop_vs1053(){
     // play mp3 flow each 1s
     player.playChunk(sampleMp3, sizeof(sampleMp3));  
     xSemaphoreGive(xSemaphoreSPI);
-
   }
    
 }

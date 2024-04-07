@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 #include "gui_guider.h"
+//=================  Структура данных помещаемых в очередь  ====================================
 typedef enum
 {
     ebandIDx = 1, // Выбор диапазона LW-0,MW-1, Sw-2, FM-3 
@@ -21,21 +22,52 @@ typedef enum
     eStepFM = 3,  // Шаг перестройки FM
     eStepAM = 4,  // Шаг перестройки AM
     eBandWFM = 5, // Полоса пропускания FM
-    eBandWAM = 6, // Полоса пропускания AM
+                                        //  0  Automatically select proper channel filter (Default) |
+                                        //  1  Force wide (110 kHz) channel filter |
+                                        //  2  Force narrow (84 kHz) channel filter |
+                                        //  3  Force narrower (60 kHz) channel filter |
+                                        //  4  Force narrowest (40 kHz) channel filter |
+    eBandWAM = 6, // Полоса пропускания AM  0 = 6 kHz Bandwidth
+                                        //  1 = 4 kHz Bandwidth
+                                        //  2 = 3 kHz Bandwidth
+                                        //  3 = 2 kHz Bandwidth
+                                        //  4 = 1 kHz Bandwidth
+                                        // 5 = 1.8 kHz Bandwidth
+                                        // 6 = 2.5 kHz Bandwidth, gradual roll off
     eBandWSSB = 7,// Полоса пропускания SSB
     eStepUP = 8,  // Перестройка вверх
     eStepDown = 9,// Перестройка вниз
-    eRSSI = 10,
-    eSNR = 11,
+    eSeekUP = 10,  // Перестройка вверх
+    eSeekDown = 11,// Перестройка вниз
     eslider_vol = 12 // Громкость 
 } DataDescription_t;
-// Структура данных помещаемых в очередь
+//================  Структура данных помещаемых в очередь ===========================
+// 
 typedef struct
 {
-    bool State;
-    int ucValue;
-    DataDescription_t eDataDescription;
+    bool State;             //  Статус Структуры, false-изменений не было, true-изменений не было
+    int ucValue;            // Значение Элемента
+    DataDescription_t eDataDescription;  // название Элемента
 } Data_GUI_Air;
+
+typedef enum
+{
+    eFreq = 0,      // Значение частоты
+    eFreqRange = 1,  // MHz or KHz
+    eRSSI = 2,
+    eSNR = 3,
+    eStereoMono = 4,
+    eRDS = 5
+} AirWebDescription_t;
+
+typedef struct
+{
+    bool State;             //  Статус Структуры, false-изменений не было, true-изменений не было
+    int ucValue;            // Значение Элемента
+    char* vcText;   // Текстовое значение  Элемента
+    AirWebDescription_t eDataDescription;  // название Элемента
+} Data_Air_GUI;
+//==================================================================================================
 
 
 void custom_init(lv_ui *ui);

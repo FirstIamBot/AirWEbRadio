@@ -40,8 +40,8 @@ static void encoder_init(void);
 static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 static void encoder_handler(void);
 void tc_finish_cb(lv_event_t *event) ;
-void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p );
-void my_touchpad_read( lv_indev_drv_t * indev_drv, lv_indev_data_t * data );
+void disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p );
+void touchpad_read( lv_indev_drv_t * indev_drv, lv_indev_data_t * data );
 void initTFT();
 void initCalTFT(void);
 
@@ -77,12 +77,15 @@ TFT_eSPI tft = TFT_eSPI(screenWidth, screenHeight); /* TFT instance */
 
 static lv_disp_draw_buf_t draw_buf;
 static lv_color_t buf[ screenWidth * screenHeight / 10 ];
-extern Data_GUI_Air xReceivedGUItoSI4735;
+
+extern Data_GUI_Air xTransmitGUItoSI4735;
+Data_Air_GUI xResivedSI4735fromdGUI;  
 //######################################################################################
 extern SemaphoreHandle_t xSemaphoreSPI;
 
-extern QueueHandle_t xQueueGUItoSI4735;
-extern QueueHandle_t xQueueSI4735toGUI;
+extern QueueHandle_t xQueueGUItoSI4735; // Очередь для передачи с GUI на Si4735
+extern QueueHandle_t xQueueSI4735toGUI; // Очередь для передачи с Si4735 на GUI
+char valFreq[15];
 //######################################################################################
 #if LV_USE_LOG != 0
 /* Serial debugging */
@@ -92,6 +95,50 @@ void my_print(const char * buf)
     Serial.flush();
 }
 #endif
+
+/**
+ * @ingroup group18 Covert numbers to char array
+ * @brief Converts a number to a char array
+ * @details It is useful to mitigate memory space used by functions like sprintf or other generic similar functions
+ * @details You can use it to format frequency using decimal or thousand separator and also to convert small numbers.
+ *
+ * @param value  value to be converted
+ * @param strValue char array that will be receive the converted value
+ * @param len final string size (in bytes)
+ * @param dot the decimal or thousand separator position
+ * @param separator symbol "." or ","
+ * @param remove_leading_zeros if true removes up to two leading zeros (default is true)
+ */
+void convertToChar(uint16_t value, char *strValue, uint8_t len, uint8_t dot, uint8_t separator, bool remove_leading_zeros)
+{
+    char d;
+    for (int i = (len - 1); i >= 0; i--)
+    {
+        d = value % 10;
+        value = value / 10;
+        strValue[i] = d + 48;
+    }
+    strValue[len] = '\0';
+    if (dot > 0)
+    {
+        for (int i = len; i >= dot; i--)
+        {
+            strValue[i + 1] = strValue[i];
+        }
+        strValue[dot] = separator;
+    }
+
+    if (remove_leading_zeros)
+    {
+        if (strValue[0] == '0')
+        {
+            strValue[0] = ' ';
+            if (strValue[1] == '0')
+                strValue[1] = ' ';
+        }
+    }
+}
+
 
 void Task_TFT(void *pvParameters) 
 {
@@ -114,7 +161,7 @@ void Task_TFT(void *pvParameters)
     lv_widgets(); 
     */
     initCalTFT();
-
+    char cstr[16]; //*cstr; //
     Serial.println( "Hello LVGL" );
     
     while (1) // A Task shall never return or exit.
@@ -133,17 +180,33 @@ void Task_TFT(void *pvParameters)
         else{
             Serial.println("Semaphore dont Take ");
         }
-        if(xReceivedGUItoSI4735.State == true)
+        /*
+            Передаём данные из xTransmitGUItoSI4735 в очередь xQueueGUItoSI4735
+            для управления Si4735
+        */
+        if(xTransmitGUItoSI4735.State == true)
         {
-		    if( xQueueSend( xQueueGUItoSI4735, &xReceivedGUItoSI4735, portMAX_DELAY ) != pdPASS )
+		    if( xQueueSend( xQueueGUItoSI4735, &xTransmitGUItoSI4735, portMAX_DELAY ) != pdPASS )
             // if( xQueueSend( xQueueGUItoSI4735, &xReceivedGUItoSI4735, 500 ) != pdPASS ) 
 		    {
                 Serial.println("We could not write to the queue because it was full  this must\
-                            be an error as the queue should never contain more than one item!");
+                                be an error as the queue should never contain more than one item!");
 		    }
-            xReceivedGUItoSI4735.State = false;
+            xTransmitGUItoSI4735.State = false;
         }
+        /*
+            Передаём данные через xResivedSI4735fromdGUI(Si4735) для отображения в GUI
+        */
+        if (pdTRUE == xQueueReceive( xQueueSI4735toGUI, &xResivedSI4735fromdGUI, pdPASS))
+        {
+            Serial.print("Task_TFT********** eDataDescription =  ");Serial.println(xResivedSI4735fromdGUI.eDataDescription);
+            //itoa(xResivedSI4735fromdGUI.ucValue, cstr, 10);
+            //ulltoa(xResivedSI4735fromdGUI.ucValue / 100, cstr, 10);
+            //sprintf(cstr, "%05d", xResivedSI4735fromdGUI.ucValue/100.0);
+            convertToChar(xResivedSI4735fromdGUI.ucValue, valFreq,  5, 3, '.', 0);
+            Serial.print("Task_TFT** INT ******** strFreq =  ");Serial.println(valFreq);
 
+        }
 /*
         xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);
         lv_task_handler();
@@ -152,7 +215,6 @@ void Task_TFT(void *pvParameters)
 */
     }
 }
-
 //######################################################################################
 /*Initialize your keypad*/
 static void encoder_init(void)
@@ -195,7 +257,7 @@ void tc_finish_cb(lv_event_t *event) {
     awgui(); /* Implement this */
 };
 /* Display flushing */
-void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p )
+void disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p )
 {
     uint32_t w = ( area->x2 - area->x1 + 1 );
     uint32_t h = ( area->y2 - area->y1 + 1 );
@@ -208,7 +270,7 @@ void my_disp_flush( lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *
     lv_disp_flush_ready( disp_drv );
 }
 /*Read the touchpad*/
-void my_touchpad_read( lv_indev_drv_t * indev_drv, lv_indev_data_t * data )
+void touchpad_read( lv_indev_drv_t * indev_drv, lv_indev_data_t * data )
 {
     uint16_t touchX, touchY;
 
@@ -253,7 +315,7 @@ void initTFT()
     /*Change the following line to your display resolution*/
     disp_drv.hor_res = screenWidth;
     disp_drv.ver_res = screenHeight;
-    disp_drv.flush_cb = my_disp_flush;
+    disp_drv.flush_cb = disp_flush;
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register( &disp_drv );
 
@@ -273,7 +335,7 @@ void initTFT()
      * -----------------*/
     lv_indev_drv_init( &touch_indev_drv );
     touch_indev_drv.type = LV_INDEV_TYPE_POINTER;
-    touch_indev_drv.read_cb = my_touchpad_read;
+    touch_indev_drv.read_cb = touchpad_read;
     indev_touchpad = lv_indev_drv_register(&touch_indev_drv);
 }
 /* Init TFT without calibrate */
@@ -298,7 +360,7 @@ void initCalTFT(void)
     /*Change the following line to your display resolution*/
     disp_drv.hor_res = screenWidth;
     disp_drv.ver_res = screenHeight;
-    disp_drv.flush_cb = my_disp_flush;
+    disp_drv.flush_cb = disp_flush;
     disp_drv.draw_buf = &draw_buf;
     lv_disp_drv_register( &disp_drv );
    /*------------------
@@ -315,7 +377,7 @@ void initCalTFT(void)
 
     //lv_indev_drv_t indevDrv;
 
-    lv_tc_indev_drv_init(&touch_indev_drv, my_touchpad_read);
+    lv_tc_indev_drv_init(&touch_indev_drv, touchpad_read);
     /* Register the driver. */
     lv_indev_drv_register(&touch_indev_drv);
 

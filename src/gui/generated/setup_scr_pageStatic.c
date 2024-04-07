@@ -38,6 +38,7 @@ void setup_scr_pageStatic(lv_ui *ui)
 	lv_label_set_long_mode(ui->pageStatic_btn_next_page_label, LV_LABEL_LONG_WRAP);
 	lv_obj_align(ui->pageStatic_btn_next_page_label, LV_ALIGN_CENTER, 0, 0);
 	lv_obj_set_style_pad_all(ui->pageStatic_btn_next_page, 0, LV_STATE_DEFAULT);
+	lv_obj_set_width(ui->pageStatic_btn_next_page_label, LV_PCT(100));
 	lv_obj_set_pos(ui->pageStatic_btn_next_page, 272, 13);
 	lv_obj_set_size(ui->pageStatic_btn_next_page, 38, 26);
 

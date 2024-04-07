@@ -32,11 +32,15 @@ typedef struct
 	lv_obj_t *pageAirradio;
 	bool pageAirradio_del;
 	lv_obj_t *pageAirradio_RDS;
-	lv_obj_t *pageAirradio_spangroup_1;
+	lv_obj_t *pageAirradio_spangroup_Freq;
 	lv_obj_t *pageAirradio_spangroup_WB;
+	lv_obj_t *pageAirradio_btnm_Main;
+	lv_obj_t *pageAirradio_up_step;
+	lv_obj_t *pageAirradio_up_step_label;
 	lv_obj_t *pageAirradio_down_step;
 	lv_obj_t *pageAirradio_down_step_label;
-	lv_obj_t *pageAirradio_btnm_Main;
+	lv_obj_t *pageAirradio_imgbtn_1;
+	lv_obj_t *pageAirradio_imgbtn_1_label;
 	lv_obj_t *pageAirradio_cont_StepAM;
 	lv_obj_t *pageAirradio_btnm_StepAM;
 	lv_obj_t *pageAirradio_cont_StepFM;
@@ -51,14 +55,11 @@ typedef struct
 	lv_obj_t *pageAirradio_textprogress_vol;
 	lv_obj_t *pageAirradio_slider_vol;
 	lv_obj_t *pageAirradio_cont_Mod;
-	lv_obj_t *pageAirradio_btnm_Mob;
-	lv_obj_t *pageAirradio_spangroup_Step;
-	lv_obj_t *pageAirradio_spangroup_RSSI;
+	lv_obj_t *pageAirradio_btnm_Mod;
 	lv_obj_t *pageAirradio_spangroup_SNR;
-	lv_obj_t *pageAirradio_imgbtn_1;
-	lv_obj_t *pageAirradio_imgbtn_1_label;
-	lv_obj_t *pageAirradio_up_step;
-	lv_obj_t *pageAirradio_up_step_label;
+	lv_obj_t *pageAirradio_spangroup_RSSI;
+	lv_obj_t *pageAirradio_spangroup_Step;
+  int global_language;
 }lv_ui;
 
 typedef void (*ui_setup_scr_t)(lv_ui * ui);
@@ -90,6 +91,8 @@ void setup_ui(lv_ui *ui);
 
 
 extern lv_ui guider_ui;
+extern int global_language;
+
 
 void setup_scr_pageStatic(lv_ui *ui);
 void setup_scr_pageAirradio(lv_ui *ui);
@@ -104,6 +107,7 @@ LV_FONT_DECLARE(lv_font_montserratMedium_16)
 LV_FONT_DECLARE(lv_font_montserratMedium_36)
 LV_FONT_DECLARE(lv_font_montserratMedium_20)
 LV_FONT_DECLARE(lv_font_montserratMedium_14)
+
 
 
 #ifdef __cplusplus

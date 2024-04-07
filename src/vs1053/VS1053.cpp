@@ -311,13 +311,13 @@ void VS1053::switchToMp3Mode() {
  * An optional switch.
  * Плагин для переключения на линейный вход 
  */
-void VS1053::switchToAdmix3Mode() {
+void VS1053::switchToAdmixMode() {
     writeRegister(SCI_MODE, _BV(SM_LINE1)); // Выключение Микрофона
-    wram_write(SCI_AICTRL0, 0xfffd); // Установка громкости -3 Дб, возможна регулировка до -31 Дб
-    delayRTOS(100);
-    LOG("Switched to AdMix mode\n");
+    writeRegister(SCI_AICTRL0, 0xffee);     // Установка громкости -3 Дб(0xfffd), возможна регулировка до -31 Дб(0xffe0)
+    delayRTOS(100); 
+    writeRegister(SCI_AIADDR, 0x0f00); //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
+    LOG("Switched to AdMix mode\n");   
     softReset();
-     wram_write(SCI_AIADDR, 0x0f00); //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
 }
 
 /**
