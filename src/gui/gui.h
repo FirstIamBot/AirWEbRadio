@@ -15,6 +15,7 @@ void gui_meter(void);
 void gui_bar(void);
 void lv_test(void);
 void awgui(void); 
+void awgui_reload(Data_Air_GUI data);
 
 /**********************
  *      MACROS

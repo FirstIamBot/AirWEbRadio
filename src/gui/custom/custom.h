@@ -52,19 +52,21 @@ typedef struct
 
 typedef enum
 {
-    eFreq = 0,      // Значение частоты
-    eFreqRange = 1,  // MHz or KHz
-    eRSSI = 2,
-    eSNR = 3,
-    eStereoMono = 4,
-    eRDS = 5
+    eEmpty = 0,
+    eFreq = 1,  // Значение частоты
+    eStatussi4735 = 2
 } AirWebDescription_t;
 
 typedef struct
 {
-    bool State;             //  Статус Структуры, false-изменений не было, true-изменений не было
-    int ucValue;            // Значение Элемента
-    char* vcText;   // Текстовое значение  Элемента
+    bool State;         //  Статус Структуры, false-изменений не было, true-изменений не было
+    char * vcFreq; // Текстовое значение 
+    char * vcFreqRange; // Текстовое значение 
+    char * vcStereoMono;// Текстовое значение
+    char * vcSNR;       // Текстовое значение  
+    char * vcRSSI;      // Текстовое значение  
+    char * vcBW;        // Текстовое значение
+    char * vcStep;      // Текстовое значение
     AirWebDescription_t eDataDescription;  // название Элемента
 } Data_Air_GUI;
 //==================================================================================================

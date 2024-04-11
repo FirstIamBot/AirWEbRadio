@@ -32,13 +32,20 @@ typedef struct
 	lv_obj_t *pageAirradio;
 	bool pageAirradio_del;
 	lv_obj_t *pageAirradio_RDS;
-	lv_obj_t *pageAirradio_spangroup_Freq;
-	lv_obj_t *pageAirradio_spangroup_WB;
 	lv_obj_t *pageAirradio_btnm_Main;
 	lv_obj_t *pageAirradio_up_step;
 	lv_obj_t *pageAirradio_up_step_label;
 	lv_obj_t *pageAirradio_down_step;
 	lv_obj_t *pageAirradio_down_step_label;
+	lv_obj_t *pageAirradio_label_mono;
+	lv_obj_t *pageAirradio_label_FreqRange;
+	lv_obj_t *pageAirradio_label_Freq;
+	lv_obj_t *pageAirradio_label_step_val;
+	lv_obj_t *pageAirradio_label_step_range;
+	lv_obj_t *pageAirradio_label_step_name;
+	lv_obj_t *pageAirradio_label_wb_name;
+	lv_obj_t *pageAirradio_label_wb_val;
+	lv_obj_t *pageAirradio_label_wb_range;
 	lv_obj_t *pageAirradio_imgbtn_1;
 	lv_obj_t *pageAirradio_imgbtn_1_label;
 	lv_obj_t *pageAirradio_cont_StepAM;
@@ -56,9 +63,17 @@ typedef struct
 	lv_obj_t *pageAirradio_slider_vol;
 	lv_obj_t *pageAirradio_cont_Mod;
 	lv_obj_t *pageAirradio_btnm_Mod;
-	lv_obj_t *pageAirradio_spangroup_SNR;
-	lv_obj_t *pageAirradio_spangroup_RSSI;
-	lv_obj_t *pageAirradio_spangroup_Step;
+	lv_obj_t *pageAirradio_label_rssi_val;
+	lv_obj_t *pageAirradio_label_rrsi_name;
+	lv_obj_t *pageAirradio_label_rssi_range;
+	lv_obj_t *pageAirradio_label_snr_val;
+	lv_obj_t *pageAirradio_label_snr_name;
+	lv_obj_t *pageAirradio_label_snr_range;
+	lv_obj_t *screen_1;
+	bool screen_1_del;
+	lv_obj_t *screen_1_label_Name;
+	lv_obj_t *screen_1_label_val;
+	lv_obj_t *screen_1_label_range;
   int global_language;
 }lv_ui;
 
@@ -96,6 +111,7 @@ extern int global_language;
 
 void setup_scr_pageStatic(lv_ui *ui);
 void setup_scr_pageAirradio(lv_ui *ui);
+void setup_scr_screen_1(lv_ui *ui);
 LV_IMG_DECLARE(_nxp60_alpha_40x28);
 LV_IMG_DECLARE(_vol_alpha_43x46);
 
@@ -104,10 +120,8 @@ LV_FONT_DECLARE(lv_font_montserratMedium_10)
 LV_FONT_DECLARE(lv_font_Antonio_Regular_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
-LV_FONT_DECLARE(lv_font_montserratMedium_36)
-LV_FONT_DECLARE(lv_font_montserratMedium_20)
+LV_FONT_DECLARE(lv_font_montserratMedium_26)
 LV_FONT_DECLARE(lv_font_montserratMedium_14)
-
 
 
 #ifdef __cplusplus

@@ -145,6 +145,7 @@ void init_scr_del_flag(lv_ui *ui)
   
 	ui->pageStatic_del = true;
 	ui->pageAirradio_del = true;
+	ui->screen_1_del = true;
 }
 
 void setup_ui(lv_ui *ui)

@@ -20,8 +20,7 @@ void events_init(lv_ui *ui);
 
 void events_init_pageStatic(lv_ui *ui);
 void events_init_pageAirradio(lv_ui *ui);
-
-
+void events_init_screen_1(lv_ui *ui);
 
 #ifdef __cplusplus
 }

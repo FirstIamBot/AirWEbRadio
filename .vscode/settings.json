@@ -29,6 +29,7 @@
         "tuple": "cpp",
         "utility": "cpp",
         "widgets_init.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "sstream": "c"
     }
 }

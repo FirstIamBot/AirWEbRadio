@@ -96,48 +96,6 @@ void my_print(const char * buf)
 }
 #endif
 
-/**
- * @ingroup group18 Covert numbers to char array
- * @brief Converts a number to a char array
- * @details It is useful to mitigate memory space used by functions like sprintf or other generic similar functions
- * @details You can use it to format frequency using decimal or thousand separator and also to convert small numbers.
- *
- * @param value  value to be converted
- * @param strValue char array that will be receive the converted value
- * @param len final string size (in bytes)
- * @param dot the decimal or thousand separator position
- * @param separator symbol "." or ","
- * @param remove_leading_zeros if true removes up to two leading zeros (default is true)
- */
-void convertToChar(uint16_t value, char *strValue, uint8_t len, uint8_t dot, uint8_t separator, bool remove_leading_zeros)
-{
-    char d;
-    for (int i = (len - 1); i >= 0; i--)
-    {
-        d = value % 10;
-        value = value / 10;
-        strValue[i] = d + 48;
-    }
-    strValue[len] = '\0';
-    if (dot > 0)
-    {
-        for (int i = len; i >= dot; i--)
-        {
-            strValue[i + 1] = strValue[i];
-        }
-        strValue[dot] = separator;
-    }
-
-    if (remove_leading_zeros)
-    {
-        if (strValue[0] == '0')
-        {
-            strValue[0] = ' ';
-            if (strValue[1] == '0')
-                strValue[1] = ' ';
-        }
-    }
-}
 
 
 void Task_TFT(void *pvParameters) 
@@ -199,13 +157,7 @@ void Task_TFT(void *pvParameters)
         */
         if (pdTRUE == xQueueReceive( xQueueSI4735toGUI, &xResivedSI4735fromdGUI, pdPASS))
         {
-            Serial.print("Task_TFT********** eDataDescription =  ");Serial.println(xResivedSI4735fromdGUI.eDataDescription);
-            //itoa(xResivedSI4735fromdGUI.ucValue, cstr, 10);
-            //ulltoa(xResivedSI4735fromdGUI.ucValue / 100, cstr, 10);
-            //sprintf(cstr, "%05d", xResivedSI4735fromdGUI.ucValue/100.0);
-            convertToChar(xResivedSI4735fromdGUI.ucValue, valFreq,  5, 3, '.', 0);
-            Serial.print("Task_TFT** INT ******** strFreq =  ");Serial.println(valFreq);
-
+            awgui_reload(xResivedSI4735fromdGUI);
         }
 /*
         xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);

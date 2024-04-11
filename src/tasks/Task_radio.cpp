@@ -47,8 +47,55 @@ void printConfig(void);
 void loadConfig(void);
 void EraseConfig(void);
 //===========================================++++=== Bandwidth AM, SSB, FM     ==================================
+typedef struct
+{
+  uint8_t idx;      // SI473X device bandwidth index
+  char *desc; // bandwidth description
+} Bandwidth;
+
+Bandwidth bandwidthSSB[] = {
+    {4, "0.5"},
+    {5, "1.0"},
+    {0, "1.2"},
+    {1, "2.2"},
+    {2, "3.0"},
+    {3, "4.0"}};
+
+Bandwidth bandwidthAM[] = {
+    {4, "1.0"},
+    {5, "1.8"},
+    {3, "2.0"},
+    {6, "2.5"},
+    {2, "3.0"},
+    {1, "4.0"},
+    {0, "6.0"}};
+
+const char * bandwidthFM[] = {
+    "AUT", // Automatic - default
+    "110", // Force wide (110 kHz) channel filter.
+    " 84",
+    " 60",
+    " 40"};
+
 //======================================================= End Bandwidth AM & FM & SSB ===========================
 //======================================================= Tunings Steps     =====================================
+typedef struct
+{
+  uint8_t idx;      // SI473X device bandwidth index
+  char *desc; // bandwidth description
+} Step;
+
+Step StepAM[] = {
+    {4, "1.0"},
+    {5, "5.0"},
+    {3, "8.0"},
+    {6, "10"}};
+
+const char * StepFM[] = {
+    "200", // Automatic - default
+    "100", // Force wide (110 kHz) channel filter.
+    " 50",
+    " 10"};
 //======================================================= End Tunings Steps     =================================
 //======================================================= THE Band Definitions     ==============================
 typedef struct // Band data
@@ -134,22 +181,31 @@ Band band[] = {
 #endif
 };
 //=============================================================================================================
-uint8_t volume = 50;
-uint8_t currentStep = 0; // Default step (increment and decrement)
 
-uint8_t BandWidthFM;
-uint8_t BandWidthAM;
-uint8_t BandWidthSSB;
 
 #define AMPLFLT_on 0
 #define AMPLFLT_off 1
 
-
 extern QueueHandle_t xQueueGUItoSI4735;
 extern QueueHandle_t xQueueSI4735toGUI;
-int16_t si4735Addr ;
 
 bool writingEeprom  = false;
+
+uint8_t volume = 50;
+
+uint8_t currentStep = 10; // Default step (increment and decrement)
+uint16_t currentRSSI = 0;
+uint16_t currentSNR = 0;
+uint8_t currentMod = 0;
+uint8_t currentBandType = FM_BAND_TYPE ; 
+
+uint8_t BandWidthFM = 0;
+uint8_t BandWidthAM = 0;
+uint8_t BandWidthSSB = 0;
+
+uint8_t stereo = 0;
+
+int16_t si4735Addr ;
 //******************************************************************************
 SI4735 si4735;          // Init resiver SI4735
 #define RESET_PIN 12
@@ -169,19 +225,14 @@ uint8_t previousAGCgain    =  1;
 uint8_t currentAGCgainStep =  1;
 uint8_t MaxAGCgain;
 uint8_t MaxAGCgainFM       = 36;  //0 = Minimum attenuation (max gain)
-                                 //36 - Maximum attenuation (min gain)
+                                  //36 - Maximum attenuation (min gain)
 uint8_t MaxAGCgainAM       = 37;
 uint8_t MinAGCgain         =  1;
 
-uint8_t rssi = 0;
-uint8_t snr = 0;
-uint8_t stereo = 0;
 
 uint8_t currentVOL         =  60; //0 - min, 63 - max
 uint8_t previousVOL        =  0;
 uint8_t currentVOLStep     =  1;
-
-uint8_t currentMod;
 
 uint8_t FirmwarePN ;
 uint8_t FirmwareFWMAJOR;
@@ -296,7 +347,6 @@ StoreStruct storage = {
   0   //BFOSW
 };
 
-
 //#############################################################################################################
 void showStatus()
 {
@@ -308,34 +358,34 @@ void showStatus()
 	{
 		Serial.print(String(currentFrequency / 100.0, 2));
 		Serial.print("MHz ");
-        stereo = si4735.getCurrentPilot(); //(si4735.getCurrentPilot()) ? "STEREO" : "MONO"
-		Serial.print("Audio Out = "); Serial.println(stereo ? "STEREO" : "MONO");
+    stereo = si4735.getCurrentPilot(); //(si4735.getCurrentPilot()) ? "STEREO" : "MONO"
+		Serial.print("Audio Out = "); Serial.println(stereo ? "stereo" : "mono");
 	}
 	else
 	{
 		Serial.print(currentFrequency);
 		Serial.print(" kHz");
 	}
-    snr = si4735.getCurrentSNR();
+  currentSNR = si4735.getCurrentSNR();
 	Serial.print(" [SNR:");
-	Serial.print(snr);
-	Serial.print("dB");
+	Serial.print(currentSNR);
+	Serial.print("dB  ");
 
-    rssi = si4735.getCurrentRSSI();
+  currentRSSI = si4735.getCurrentRSSI();
 	Serial.print(" Signal:");
-	Serial.print(rssi);
+	Serial.print(currentRSSI);
 	Serial.println("dBuV]");
 	//si4735Addr = si4735.getDeviceI2CAddress(RESET_PIN);
-    Serial.print("si4735Addr = ");Serial.println(si4735Addr, HEX);
+  Serial.print("si4735Addr = ");Serial.println(si4735Addr, HEX);
 
-    FirmwarePN = si4735.getFirmwarePN();
-    Serial.print("FirmwarePN = ");Serial.println(FirmwarePN);
-    FirmwareFWMAJOR = si4735.getFirmwareFWMAJOR();
-    Serial.print("FirmwareFWMAJOR = ");Serial.println(FirmwareFWMAJOR);
-    FirmwareFWMINOR = si4735.getFirmwareFWMINOR();
-    Serial.print("FirmwareFWMINOR = ");Serial.println(FirmwareFWMINOR);
-    currentVOL = si4735.getVolume();
-    Serial.print("currentVOL = ");Serial.println(currentVOL);
+  FirmwarePN = si4735.getFirmwarePN();
+  Serial.print("FirmwarePN = ");Serial.println(FirmwarePN);
+  FirmwareFWMAJOR = si4735.getFirmwareFWMAJOR();
+  Serial.print("FirmwareFWMAJOR = ");Serial.println(FirmwareFWMAJOR);
+  FirmwareFWMINOR = si4735.getFirmwareFWMINOR();
+  Serial.print("FirmwareFWMINOR = ");Serial.println(FirmwareFWMINOR);
+  currentVOL = si4735.getVolume();
+  Serial.print("currentVOL = ");Serial.println(currentVOL);
 
 }
 
@@ -348,35 +398,148 @@ void loadSSB() {
 // Show current frequency
 void sendFreq()
 {
+  char strfreq[10];
+  char strrssi[10];
+  
+  uint8_t n = 5, d = 3;
 
-  char buf[1 + 8 * sizeof(unsigned long long)];
   si4735.getStatus();
 	si4735.getCurrentReceivedSignalQuality();
   currentFrequency = si4735.getFrequency();
 
 	if (si4735.isCurrentTuneFM())
 	{
-        //ulltoa(currentFrequency / 100.0, buf, 10);
-        itoa(currentFrequency, buf, 10);
-        xTransmitSI4735todGUI.eDataDescription = eFreq;
-        xTransmitSI4735todGUI.vcText = buf;
-        xTransmitSI4735todGUI.ucValue = currentFrequency;
-        xTransmitSI4735todGUI.State = true;
-        //Serial.print("------------------------ currentFrequency = ");Serial.println(currentFrequency);
-        //xTransmitSI4735todGUI.vcText = "MHz";
-        //Serial.print("MHz ");
-        //stereo = si4735.getCurrentPilot(); //(si4735.getCurrentPilot()) ? "STEREO" : "MONO"
-        //Serial.print("Audio Out = "); Serial.println(stereo ? "STEREO" : "MONO");
+    if (currentFrequency < 10000)
+    {
+      n = 4;
+      d = 2;
+    }
+    si4735.convertToChar(currentFrequency, strfreq, n, d, '.',true);
+    xTransmitSI4735todGUI.vcFreq = (char *)strfreq;
+    xTransmitSI4735todGUI.vcFreqRange = "MHz";
+    stereo = si4735.getCurrentPilot();
+    if( stereo == 0 )
+    {
+      xTransmitSI4735todGUI.vcStereoMono = " mono ";
+    } 
+    else
+    {
+      xTransmitSI4735todGUI.vcStereoMono = "stereo";
+    }
 	}
 	else
 	{
-        ulltoa(currentFrequency, buf, 2);
-        xTransmitSI4735todGUI.vcText = buf;
-        xTransmitSI4735todGUI.ucValue = currentFrequency;
-        //xTransmitSI4735todGUI.vcText = "kHz";
-        xTransmitSI4735todGUI.State = true;
-        //Serial.print("------------------------ currentFrequency = ");Serial.println(xTransmitSI4735todGUI.vcText);
+    if (currentBandType == MW_BAND_TYPE || currentBandType == LW_BAND_TYPE || currentBandType == SW_BAND_TYPE)
+    {
+      si4735.convertToChar(currentFrequency, strfreq, 5, 0, '.');
+    }
+    else
+    {
+      si4735.convertToChar(currentFrequency, strfreq, 5, 2, '.');
+    }
+    xTransmitSI4735todGUI.vcFreq = (char *)strfreq;
+    xTransmitSI4735todGUI.vcFreqRange = "KHz";
+    xTransmitSI4735todGUI.vcStereoMono = "      ";
   }
+  
+  xTransmitSI4735todGUI.eDataDescription = eFreq;
+  xTransmitSI4735todGUI.State = true;
+}
+
+void sendStatus(void)
+{ 
+  char strrssi[3];
+
+
+  si4735.getStatus();
+  si4735.getCurrentReceivedSignalQuality();
+    
+  currentSNR = si4735.getCurrentRSSI();
+  si4735.convertToChar(currentSNR, strrssi, 3, 0, '.');
+  xTransmitSI4735todGUI.vcSNR = (char *)strrssi;
+  currentRSSI = si4735.getCurrentSNR();
+  si4735.convertToChar(currentRSSI, strrssi, 3, 0, '.');
+  xTransmitSI4735todGUI.vcRSSI = (char *)strrssi;
+  /*
+    if (currentBandType == MW_BAND_TYPE || currentBandType == LW_BAND_TYPE || currentBandType == SW_BAND_TYPE  )
+    { 
+      if(currentMod == 0) // AM (AM modulation) mode
+      {
+        if(BandWidthAM == 0 )
+        {
+          xTransmitSI4735todGUI.vcBW = "6.0";
+        }
+        if(BandWidthAM == 1 )
+        {
+          xTransmitSI4735todGUI.vcBW = "4.0";
+        }
+        if(BandWidthAM == 2 )
+        {
+          xTransmitSI4735todGUI.vcBW = "3.0";
+        }
+        if(BandWidthAM == 3 )
+        {
+          xTransmitSI4735todGUI.vcBW = "2.0";
+        }
+        if(BandWidthAM == 4 )
+        {
+          xTransmitSI4735todGUI.vcBW = "1.0";
+        }
+        if(BandWidthAM == 5 )
+        {
+          xTransmitSI4735todGUI.vcBW = "1.8";
+        }
+        if(BandWidthAM == 6 )
+        {
+          xTransmitSI4735todGUI.vcBW = "2.5";
+        }
+        xTransmitSI4735todGUI.vcStep = StepAM[currentStep].desc;
+      }
+      else // SSB (LSB, USB modulation) mode
+      {
+        if(BandWidthSSB == 0 )
+        {
+          xTransmitSI4735todGUI.vcBW = "1.2";
+        }
+        if(BandWidthSSB == 1 )
+        {
+          xTransmitSI4735todGUI.vcBW = "2.2";
+        }
+        if(BandWidthSSB == 2 )
+        {
+          xTransmitSI4735todGUI.vcBW = "3.0";
+        }
+        if(BandWidthSSB == 3 )
+        {
+          xTransmitSI4735todGUI.vcBW = "4.0";
+        }
+        if(BandWidthSSB == 4 )
+        {
+          xTransmitSI4735todGUI.vcBW = "0.5";
+        }
+        if(BandWidthSSB == 5 )
+        {
+          xTransmitSI4735todGUI.vcBW = "1.0";
+        }
+        xTransmitSI4735todGUI.vcStep = StepAM[currentStep].desc;
+      }
+    }
+    else if(currentBandType == FM_BAND_TYPE )
+    {
+      xTransmitSI4735todGUI.vcBW = (char *)bandwidthFM[BandWidthFM];
+      xTransmitSI4735todGUI.vcStep = (char *)StepFM[currentStep];
+    }
+
+  */
+  Serial.print("currentSNR  = "); Serial.println(currentSNR);
+  Serial.print("currentRSSI = "); Serial.println(currentRSSI);
+  Serial.print("xTransmitSI4735todGUI.vcBW  = "); Serial.println(xTransmitSI4735todGUI.vcSNR );
+  Serial.print("xTransmitSI4735todGUI.vcRSSI  = "); Serial.println(xTransmitSI4735todGUI.vcRSSI );
+  xTransmitSI4735todGUI.eDataDescription = eStatussi4735;
+  xTransmitSI4735todGUI.State = true;
+
+
+  
 }
 //###############################################################################################################
 void initRadio(void)
@@ -435,57 +598,63 @@ void Task_Radio(void *pvParameters)
             if(xReceivedGUIfromSI4735.ucValue == LW_BAND_TYPE){
               si4735.setup(RESET_PIN, -1, POWER_UP_AM, SI473X_ANALOG_AUDIO, XOSCEN_RCLK); // Start in AM
               si4735.setTuneFrequencyAntennaCapacitor(0);
-              currentStep = 10;
               si4735.setAM(130, 279, 198, currentStep);
               si4735.setBandwidth(0, AMPLFLT_on);
               si4735.setVolume(currentVOL);
+              currentBandType = LW_BAND_TYPE;
               Serial.println("LW_BAND_TYPE");
+              sendFreq();
             }
             if(xReceivedGUIfromSI4735.ucValue == MW_BAND_TYPE){
               si4735.setup(RESET_PIN, -1, POWER_UP_AM, SI473X_ANALOG_AUDIO, XOSCEN_RCLK); // Start in AM
               si4735.setTuneFrequencyAntennaCapacitor(0);
-              currentStep = 10;
               si4735.setAM(520, 1750, 550, currentStep);
               si4735.setBandwidth(0, AMPLFLT_on);
               si4735.setVolume(currentVOL);
+              currentBandType = MW_BAND_TYPE;
               Serial.println("MW_BAND_TYPE");
+              sendFreq();
             }
             if(xReceivedGUIfromSI4735.ucValue == SW_BAND_TYPE){
-                si4735.setup(RESET_PIN, -1, POWER_UP_AM, SI473X_ANALOG_AUDIO, XOSCEN_RCLK); // Start in AM
-                si4735.setTuneFrequencyAntennaCapacitor(0);
-                currentStep = 10;
-                si4735.setAM(1730, 30000, 15500, currentStep );
-                si4735.setBandwidth(0, AMPLFLT_on);
-                si4735.setVolume(currentVOL);
-                Serial.println("SW_BAND_TYPE");
+              si4735.setup(RESET_PIN, -1, POWER_UP_AM, SI473X_ANALOG_AUDIO, XOSCEN_RCLK); // Start in AM
+              si4735.setTuneFrequencyAntennaCapacitor(0);
+              si4735.setAM(1730, 30000, 15500, currentStep );
+              si4735.setBandwidth(0, AMPLFLT_on);
+              si4735.setVolume(currentVOL);
+              currentBandType = SW_BAND_TYPE;
+              Serial.println("SW_BAND_TYPE");
+              sendFreq();
             }
             if(xReceivedGUIfromSI4735.ucValue == FM_BAND_TYPE){
-                currentStep = 10;
-                si4735.setTuneFrequencyAntennaCapacitor(80);//0
-                delay(100);
-                si4735.setFM(8400, 10800, 10360, currentStep);
-                si4735.setFMDeEmphasis(1);
-                si4735.setVolume(currentVOL);
-                currentAGCgain = MaxAGCgainFM;
-                si4735.setAutomaticGainControl(disableAgc, currentAGCgain);
-                //si4735.RdsInit();
-                //si4735.setRdsConfig(1, 2, 2, 2, 2);
-                Serial.println("FM_BAND_TYPE");
+              si4735.setTuneFrequencyAntennaCapacitor(80);//0
+              delay(100);
+              si4735.setFM(8400, 10800, 10360, currentStep);
+              si4735.setFMDeEmphasis(1);
+              si4735.setVolume(currentVOL);
+              currentAGCgain = MaxAGCgainFM;
+              si4735.setAutomaticGainControl(disableAgc, currentAGCgain);
+              currentBandType = FM_BAND_TYPE;
+              si4735.RdsInit();
+              si4735.setRdsConfig(1, 2, 2, 2, 2);
+              Serial.println("FM_BAND_TYPE");
+              sendFreq();
               }
-              break;
+            break;
           case eModIdx: 
             currentMod = xReceivedGUIfromSI4735.ucValue;
             if(currentMod != 0)
             {
               loadSSB();
               si4735.setFmBandwidth(BandWidthSSB);
+              sendFreq();
             }
             else{
                 si4735.setAM(130, 279, 198, currentStep);
                 si4735.setFmBandwidth(BandWidthAM);
+                sendFreq();
             }
             Serial.print("set Modulation = "); Serial.println(currentMod);
-              break;
+             break;
           case eStepFM:
             currentStep = xReceivedGUIfromSI4735.ucValue; 
             si4735.setFrequencyStep(currentStep);
@@ -527,15 +696,10 @@ void Task_Radio(void *pvParameters)
             Serial.print("Set volume = ");Serial.println(volume);   
             break;
           default:
-            //Serial.print(xReceivedGUIfromSI4735.eDataDescription);Serial.print(" = ");Serial.println(XZ);      
             break;
         }
-        //showStatus();
-        if(lastXZ != XZ)
-        {
-          lastXZ == XZ;
-          XZ = 0;
-        }
+        //sendFreq();
+        //sendStatus();
       }
       else
       {
@@ -545,7 +709,9 @@ void Task_Radio(void *pvParameters)
       //vTaskDelay(200);
       /*
         Очередь xQueueSI4735toGUI для отравки информации на экран
-      */ 
+      */
+      //showStatus();
+      
       if(xTransmitSI4735todGUI.State == true)
       {
         //if( xQueueSend( xQueueGUItoSI4735, &xTransmitSI4735todGUI, portMAX_DELAY ) != pdPASS )

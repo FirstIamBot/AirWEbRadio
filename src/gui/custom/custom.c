@@ -30,7 +30,7 @@
  *  STATIC VARIABLES
  **********************/
 static uint32_t input_value = 0;
-extern char valFreq[15];
+
 /**
  * Create a demo application
  */
@@ -38,7 +38,6 @@ extern char valFreq[15];
 void custom_init(lv_ui *ui)
 {
     /* Add your codes here */
-    
 }
 
 
