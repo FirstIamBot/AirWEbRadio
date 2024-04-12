@@ -60,6 +60,12 @@ typedef enum
 typedef struct
 {
     bool State;         //  Статус Структуры, false-изменений не было, true-изменений не было
+    uint16_t ucFreq;
+    uint8_t ucSNR;       //  значение  
+    uint8_t ucRSSI;      //  значение  
+    uint8_t ucBW;        //  значение
+    uint8_t ucStep;      //  значение
+    uint8_t ucBand;
     char * vcFreq; // Текстовое значение 
     char * vcFreqRange; // Текстовое значение 
     char * vcStereoMono;// Текстовое значение

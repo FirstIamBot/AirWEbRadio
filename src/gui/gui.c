@@ -67,16 +67,30 @@ void awgui_reload(Data_Air_GUI data){
     switch (data.eDataDescription)
     {
         case eFreq:
-            lv_label_set_text(guider_ui.pageAirradio_label_Freq, data.vcFreq);
+            if(data.ucBand == 3)
+            {
+                convertToChar(data.ucFreq, valFreq, 5, 3, '.', true);
+            }
+            else
+            {
+                convertToChar(data.ucFreq, valFreq, 5, 0, '.', true);
+            }
+            lv_label_set_text(guider_ui.pageAirradio_label_Freq, valFreq);
+
             lv_label_set_text(guider_ui.pageAirradio_label_FreqRange, data.vcFreqRange);
             lv_label_set_text(guider_ui.pageAirradio_label_mono, data.vcStereoMono);
             
-            lv_label_set_text(guider_ui.pageAirradio_label_rssi_val, data.vcRSSI);
-            lv_label_set_text(guider_ui.pageAirradio_label_snr_val, data.vcSNR);
+            lv_label_set_text_fmt(guider_ui.pageAirradio_label_rssi_val,"%3d" , data.ucRSSI);
+            lv_label_set_text_fmt(guider_ui.pageAirradio_label_snr_val,"%3d" , data.ucSNR);
+
+            lv_label_set_text(guider_ui.pageAirradio_label_wb_val, data.vcBW);
+            lv_label_set_text(guider_ui.pageAirradio_label_step_val, data.vcStep);
             break;
         case eStatussi4735:
-            lv_label_set_text(guider_ui.pageAirradio_label_rssi_val, data.vcRSSI);
-            lv_label_set_text(guider_ui.pageAirradio_label_snr_val, data.vcSNR);
+            lv_label_set_text_fmt(guider_ui.pageAirradio_label_rssi_val,"%3d" , data.ucRSSI);
+            lv_label_set_text_fmt(guider_ui.pageAirradio_label_snr_val,"%3d" , data.ucSNR);
+            //lv_label_set_text(guider_ui.pageAirradio_label_rssi_val, data.vcRSSI);
+            //lv_label_set_text(guider_ui.pageAirradio_label_snr_val, data.vcSNR);
             //lv_label_set_text(guider_ui.pageAirradio_label_wb_val, data.vcBW);
             //lv_label_set_text(guider_ui.pageAirradio_label_step_val, data.vcStep);
             break;

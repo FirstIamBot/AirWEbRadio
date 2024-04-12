@@ -47,28 +47,22 @@ void printConfig(void);
 void loadConfig(void);
 void EraseConfig(void);
 //===========================================++++=== Bandwidth AM, SSB, FM     ==================================
-typedef struct
-{
-  uint8_t idx;      // SI473X device bandwidth index
-  char *desc; // bandwidth description
-} Bandwidth;
+const char *  bandwidthSSB[] = {
+    "0.5",
+    "1.0",
+    "1.2",
+    "2.2",
+    "3.0",
+    "4.0"};
 
-Bandwidth bandwidthSSB[] = {
-    {4, "0.5"},
-    {5, "1.0"},
-    {0, "1.2"},
-    {1, "2.2"},
-    {2, "3.0"},
-    {3, "4.0"}};
-
-Bandwidth bandwidthAM[] = {
-    {4, "1.0"},
-    {5, "1.8"},
-    {3, "2.0"},
-    {6, "2.5"},
-    {2, "3.0"},
-    {1, "4.0"},
-    {0, "6.0"}};
+const char *  bandwidthAM[] = {
+    "1.0",
+    "1.8",
+    "2.0",
+    "2.5",
+    "3.0",
+    "4.0",
+    "6.0"};
 
 const char * bandwidthFM[] = {
     "AUT", // Automatic - default
@@ -76,27 +70,28 @@ const char * bandwidthFM[] = {
     " 84",
     " 60",
     " 40"};
-
 //======================================================= End Bandwidth AM & FM & SSB ===========================
-//======================================================= Tunings Steps     =====================================
+//======================================================= End Step AM & FM & SSB =================================
 typedef struct
 {
   uint8_t idx;      // SI473X device bandwidth index
-  char *desc; // bandwidth description
+  const char *desc; // bandwidth description
 } Step;
 
-Step StepAM[] = {
-    {4, "1.0"},
-    {5, "5.0"},
-    {3, "8.0"},
-    {6, "10"}};
+Step stepAM[] = {
+  {1, "1"},
+  {5, "5"},
+  {8, "8"},
+  {10, "10"},
+};
+Step stepFM[] = {
+  {1, "10"},
+  {5, "50"},
+  {10,"100"},
+  {20,"200"},
+};
+//======================================================= THE Step Definitions     ==============================
 
-const char * StepFM[] = {
-    "200", // Automatic - default
-    "100", // Force wide (110 kHz) channel filter.
-    " 50",
-    " 10"};
-//======================================================= End Tunings Steps     =================================
 //======================================================= THE Band Definitions     ==============================
 typedef struct // Band data
 {
@@ -393,13 +388,12 @@ void loadSSB() {
   si4735.setI2CFastModeCustom(400000); // You can try rx.setI2CFastModeCustom(700000); or greater value
   si4735.loadPatch(ssb_patch_content, size_content, BandWidthSSB); // 
   si4735.setI2CFastModeCustom(100000);
-
 }
-// Show current frequency
-void sendFreq()
+// Send Status on GUI
+void sendStatus()
 {
   char strfreq[10];
-  char strrssi[10];
+  char strrssi[5];
   
   uint8_t n = 5, d = 3;
 
@@ -414,6 +408,8 @@ void sendFreq()
       n = 4;
       d = 2;
     }
+    xTransmitSI4735todGUI.ucFreq = currentFrequency;
+
     si4735.convertToChar(currentFrequency, strfreq, n, d, '.',true);
     xTransmitSI4735todGUI.vcFreq = (char *)strfreq;
     xTransmitSI4735todGUI.vcFreqRange = "MHz";
@@ -437,109 +433,68 @@ void sendFreq()
     {
       si4735.convertToChar(currentFrequency, strfreq, 5, 2, '.');
     }
+    xTransmitSI4735todGUI.ucFreq = currentFrequency;
     xTransmitSI4735todGUI.vcFreq = (char *)strfreq;
     xTransmitSI4735todGUI.vcFreqRange = "KHz";
     xTransmitSI4735todGUI.vcStereoMono = "      ";
   }
   
+  currentSNR = si4735.getCurrentRSSI();
+  xTransmitSI4735todGUI.ucSNR = currentSNR;
+  currentSNR = si4735.getCurrentRSSI();
+  xTransmitSI4735todGUI.ucRSSI = currentRSSI;
+
+  if (currentBandType == MW_BAND_TYPE || currentBandType == LW_BAND_TYPE || currentBandType == SW_BAND_TYPE  )
+  { 
+    if(currentStep == 1)
+    {
+      xTransmitSI4735todGUI.vcStep =  "1";
+    }
+    if(currentStep == 5)
+    {
+      xTransmitSI4735todGUI.vcStep =  "5";
+    }
+    if(currentStep == 8)
+    {
+      xTransmitSI4735todGUI.vcStep =  "8";
+    }
+    if(currentStep == 10)
+    {
+      xTransmitSI4735todGUI.vcStep =  "10";
+    }    
+    if(currentMod == 0) // AM (AM modulation) mode
+    {
+      xTransmitSI4735todGUI.vcBW = (char * )bandwidthAM[BandWidthAM];
+    }
+    else // SSB (LSB, USB modulation) mode
+    {
+       xTransmitSI4735todGUI.vcBW = (char * )bandwidthSSB[BandWidthSSB];
+    }
+  }
+  else if(currentBandType == FM_BAND_TYPE )
+  {
+    xTransmitSI4735todGUI.vcBW = (char *)bandwidthFM[BandWidthFM];
+    if(currentStep == 1)
+    {
+      xTransmitSI4735todGUI.vcStep = "10";
+    }
+    if(currentStep == 5)
+    {
+      xTransmitSI4735todGUI.vcStep = "50";
+    }
+    if(currentStep == 10)
+    {
+      xTransmitSI4735todGUI.vcStep = "100";
+    }
+    if(currentStep == 20)
+    {
+      xTransmitSI4735todGUI.vcStep = "200";
+    }
+  }
+  xTransmitSI4735todGUI.ucBand = currentBandType;
+  
   xTransmitSI4735todGUI.eDataDescription = eFreq;
   xTransmitSI4735todGUI.State = true;
-}
-
-void sendStatus(void)
-{ 
-  char strrssi[3];
-
-
-  si4735.getStatus();
-  si4735.getCurrentReceivedSignalQuality();
-    
-  currentSNR = si4735.getCurrentRSSI();
-  si4735.convertToChar(currentSNR, strrssi, 3, 0, '.');
-  xTransmitSI4735todGUI.vcSNR = (char *)strrssi;
-  currentRSSI = si4735.getCurrentSNR();
-  si4735.convertToChar(currentRSSI, strrssi, 3, 0, '.');
-  xTransmitSI4735todGUI.vcRSSI = (char *)strrssi;
-  /*
-    if (currentBandType == MW_BAND_TYPE || currentBandType == LW_BAND_TYPE || currentBandType == SW_BAND_TYPE  )
-    { 
-      if(currentMod == 0) // AM (AM modulation) mode
-      {
-        if(BandWidthAM == 0 )
-        {
-          xTransmitSI4735todGUI.vcBW = "6.0";
-        }
-        if(BandWidthAM == 1 )
-        {
-          xTransmitSI4735todGUI.vcBW = "4.0";
-        }
-        if(BandWidthAM == 2 )
-        {
-          xTransmitSI4735todGUI.vcBW = "3.0";
-        }
-        if(BandWidthAM == 3 )
-        {
-          xTransmitSI4735todGUI.vcBW = "2.0";
-        }
-        if(BandWidthAM == 4 )
-        {
-          xTransmitSI4735todGUI.vcBW = "1.0";
-        }
-        if(BandWidthAM == 5 )
-        {
-          xTransmitSI4735todGUI.vcBW = "1.8";
-        }
-        if(BandWidthAM == 6 )
-        {
-          xTransmitSI4735todGUI.vcBW = "2.5";
-        }
-        xTransmitSI4735todGUI.vcStep = StepAM[currentStep].desc;
-      }
-      else // SSB (LSB, USB modulation) mode
-      {
-        if(BandWidthSSB == 0 )
-        {
-          xTransmitSI4735todGUI.vcBW = "1.2";
-        }
-        if(BandWidthSSB == 1 )
-        {
-          xTransmitSI4735todGUI.vcBW = "2.2";
-        }
-        if(BandWidthSSB == 2 )
-        {
-          xTransmitSI4735todGUI.vcBW = "3.0";
-        }
-        if(BandWidthSSB == 3 )
-        {
-          xTransmitSI4735todGUI.vcBW = "4.0";
-        }
-        if(BandWidthSSB == 4 )
-        {
-          xTransmitSI4735todGUI.vcBW = "0.5";
-        }
-        if(BandWidthSSB == 5 )
-        {
-          xTransmitSI4735todGUI.vcBW = "1.0";
-        }
-        xTransmitSI4735todGUI.vcStep = StepAM[currentStep].desc;
-      }
-    }
-    else if(currentBandType == FM_BAND_TYPE )
-    {
-      xTransmitSI4735todGUI.vcBW = (char *)bandwidthFM[BandWidthFM];
-      xTransmitSI4735todGUI.vcStep = (char *)StepFM[currentStep];
-    }
-
-  */
-  Serial.print("currentSNR  = "); Serial.println(currentSNR);
-  Serial.print("currentRSSI = "); Serial.println(currentRSSI);
-  Serial.print("xTransmitSI4735todGUI.vcBW  = "); Serial.println(xTransmitSI4735todGUI.vcSNR );
-  Serial.print("xTransmitSI4735todGUI.vcRSSI  = "); Serial.println(xTransmitSI4735todGUI.vcRSSI );
-  xTransmitSI4735todGUI.eDataDescription = eStatussi4735;
-  xTransmitSI4735todGUI.State = true;
-
-
-  
 }
 //###############################################################################################################
 void initRadio(void)
@@ -603,7 +558,6 @@ void Task_Radio(void *pvParameters)
               si4735.setVolume(currentVOL);
               currentBandType = LW_BAND_TYPE;
               Serial.println("LW_BAND_TYPE");
-              sendFreq();
             }
             if(xReceivedGUIfromSI4735.ucValue == MW_BAND_TYPE){
               si4735.setup(RESET_PIN, -1, POWER_UP_AM, SI473X_ANALOG_AUDIO, XOSCEN_RCLK); // Start in AM
@@ -613,7 +567,6 @@ void Task_Radio(void *pvParameters)
               si4735.setVolume(currentVOL);
               currentBandType = MW_BAND_TYPE;
               Serial.println("MW_BAND_TYPE");
-              sendFreq();
             }
             if(xReceivedGUIfromSI4735.ucValue == SW_BAND_TYPE){
               si4735.setup(RESET_PIN, -1, POWER_UP_AM, SI473X_ANALOG_AUDIO, XOSCEN_RCLK); // Start in AM
@@ -623,7 +576,6 @@ void Task_Radio(void *pvParameters)
               si4735.setVolume(currentVOL);
               currentBandType = SW_BAND_TYPE;
               Serial.println("SW_BAND_TYPE");
-              sendFreq();
             }
             if(xReceivedGUIfromSI4735.ucValue == FM_BAND_TYPE){
               si4735.setTuneFrequencyAntennaCapacitor(80);//0
@@ -637,7 +589,6 @@ void Task_Radio(void *pvParameters)
               si4735.RdsInit();
               si4735.setRdsConfig(1, 2, 2, 2, 2);
               Serial.println("FM_BAND_TYPE");
-              sendFreq();
               }
             break;
           case eModIdx: 
@@ -646,12 +597,10 @@ void Task_Radio(void *pvParameters)
             {
               loadSSB();
               si4735.setFmBandwidth(BandWidthSSB);
-              sendFreq();
             }
             else{
                 si4735.setAM(130, 279, 198, currentStep);
                 si4735.setFmBandwidth(BandWidthAM);
-                sendFreq();
             }
             Serial.print("set Modulation = "); Serial.println(currentMod);
              break;
@@ -683,12 +632,10 @@ void Task_Radio(void *pvParameters)
           case eStepUP:
             si4735.frequencyUp();
             Serial.println("Set Frequency Up");
-            sendFreq();
             break;
           case eStepDown:
             si4735.frequencyDown();
             Serial.println("Set Frequency Down");
-            sendFreq();
             break;
           case eslider_vol:
             volume = xReceivedGUIfromSI4735.ucValue*0.63;       
@@ -698,8 +645,6 @@ void Task_Radio(void *pvParameters)
           default:
             break;
         }
-        //sendFreq();
-        //sendStatus();
       }
       else
       {
@@ -711,7 +656,7 @@ void Task_Radio(void *pvParameters)
         Очередь xQueueSI4735toGUI для отравки информации на экран
       */
       //showStatus();
-      
+      sendStatus();
       if(xTransmitSI4735todGUI.State == true)
       {
         //if( xQueueSend( xQueueGUItoSI4735, &xTransmitSI4735todGUI, portMAX_DELAY ) != pdPASS )
