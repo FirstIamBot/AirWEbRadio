@@ -21,7 +21,7 @@ Data_GUI_Air xTransmitGUItoSI4735;
 static uint8_t tempebandIDx;
 static uint8_t tempucucValue;
 static uint8_t tempeModIdx;
-int slider_vol;
+uint8_t slider_vol;
 static void pageStatic_btn_next_page_event_handler (lv_event_t *e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
@@ -99,40 +99,40 @@ static void pageAirradio_btnm_Main_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = ebandIDx;
-		xTransmitGUItoSI4735.ucValue = 0;
-		xTransmitGUItoSI4735.State = true;
-		tempebandIDx = ebandIDx;
-		tempucucValue = 0;
+			xTransmitGUItoSI4735.ucValue = 0;
+			xTransmitGUItoSI4735.State = true;
+			tempebandIDx = ebandIDx;
+			tempucucValue = 0;
 		
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = ebandIDx;
-		xTransmitGUItoSI4735.ucValue = 1;
-		xTransmitGUItoSI4735.State = true;
-		tempebandIDx = ebandIDx;
-		tempucucValue = 1;
+			xTransmitGUItoSI4735.ucValue = 1;
+			xTransmitGUItoSI4735.State = true;
+			tempebandIDx = ebandIDx;
+			tempucucValue = 1;
 		
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = ebandIDx;
-		xTransmitGUItoSI4735.ucValue = 2;
-		xTransmitGUItoSI4735.State = true;
-		tempebandIDx = ebandIDx;
-		tempucucValue = 2;
+			xTransmitGUItoSI4735.ucValue = 2;
+			xTransmitGUItoSI4735.State = true;
+			tempebandIDx = ebandIDx;
+			tempucucValue = 2;
 		
 			break;
 		}
 		case 3:
 		{
 			xTransmitGUItoSI4735.eDataDescription = ebandIDx;
-		xTransmitGUItoSI4735.ucValue = 3;
-		xTransmitGUItoSI4735.State = true;
-		tempebandIDx = ebandIDx;
-		tempucucValue = 3;
+			xTransmitGUItoSI4735.ucValue = 3;
+			xTransmitGUItoSI4735.State = true;
+			tempebandIDx = ebandIDx;
+			tempucucValue = 3;
 		
 			break;
 		}
@@ -200,8 +200,8 @@ static void pageAirradio_up_step_event_handler (lv_event_t *e)
 	case LV_EVENT_CLICKED:
 	{
 		xTransmitGUItoSI4735.eDataDescription = eStepUP;
-	xTransmitGUItoSI4735.ucValue = 1;
-	xTransmitGUItoSI4735.State = true;
+		xTransmitGUItoSI4735.ucValue = 1;
+		xTransmitGUItoSI4735.State = true;
 		break;
 	}
 	case LV_EVENT_PRESSING:
@@ -227,8 +227,8 @@ static void pageAirradio_down_step_event_handler (lv_event_t *e)
 	case LV_EVENT_CLICKED:
 	{
 		xTransmitGUItoSI4735.eDataDescription = eStepDown;
-	xTransmitGUItoSI4735.ucValue = 1;
-	xTransmitGUItoSI4735.State = true;
+		xTransmitGUItoSI4735.ucValue = 1;
+		xTransmitGUItoSI4735.State = true;
 		break;
 	}
 	case LV_EVENT_PRESSED:
@@ -276,29 +276,29 @@ static void pageAirradio_btnm_StepAM_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepAM;
-		xTransmitGUItoSI4735.ucValue = 1;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 0;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepAM;
-		xTransmitGUItoSI4735.ucValue = 5;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 1;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepAM;
-		xTransmitGUItoSI4735.ucValue = 8;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 2;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepAM;
-		xTransmitGUItoSI4735.ucValue = 10;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 3;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -325,29 +325,29 @@ static void pageAirradio_btnm_StepFM_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepFM;
-		xTransmitGUItoSI4735.ucValue = 1;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 0;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepFM;
-		xTransmitGUItoSI4735.ucValue = 5;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 1;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepFM;
-		xTransmitGUItoSI4735.ucValue = 10;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 2;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eStepFM;
-		xTransmitGUItoSI4735.ucValue = 20;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 3;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -374,36 +374,36 @@ static void pageAirradio_btnm_BandWFM_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWFM;
-		xTransmitGUItoSI4735.ucValue = 0;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 0;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWFM;
-		xTransmitGUItoSI4735.ucValue = 1;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 1;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWFM;
-		xTransmitGUItoSI4735.ucValue = 2;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 2;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWFM;
-		xTransmitGUItoSI4735.ucValue = 3;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 3;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 4:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWFM;
-		xTransmitGUItoSI4735.ucValue = 4;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 4;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -430,43 +430,43 @@ static void pageAirradio_btnm_BandWSSB_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWSSB;
-		xTransmitGUItoSI4735.ucValue = 3;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 3;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWSSB;
-		xTransmitGUItoSI4735.ucValue = 2;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 2;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWSSB;
-		xTransmitGUItoSI4735.ucValue = 1;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 1;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWSSB;
-		xTransmitGUItoSI4735.ucValue = 0;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 0;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 4:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWSSB;
-		xTransmitGUItoSI4735.ucValue = 5;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 5;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 5:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWSSB;
-		xTransmitGUItoSI4735.ucValue = 4;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 4;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -493,50 +493,50 @@ static void pageAirradio_btnm_BandWAM_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 0;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 0;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 1;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 1;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 2;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 2;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 3:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 6;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 6;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 4:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 3;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 3;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 5:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 5;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 5;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 6:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eBandWAM;
-		xTransmitGUItoSI4735.ucValue = 4;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 4;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		default:
@@ -556,10 +556,10 @@ static void pageAirradio_slider_vol_event_handler (lv_event_t *e)
 	case LV_EVENT_VALUE_CHANGED:
 	{
 		slider_vol = lv_slider_get_value(guider_ui.pageAirradio_slider_vol);
-	lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, slider_vol);
-	xTransmitGUItoSI4735.eDataDescription = eslider_vol;
-	xTransmitGUItoSI4735.ucValue = slider_vol;
-	xTransmitGUItoSI4735.State = true;
+		lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, slider_vol);
+		xTransmitGUItoSI4735.eDataDescription = eslider_vol;
+		xTransmitGUItoSI4735.ucValue = slider_vol;
+		xTransmitGUItoSI4735.State = true;
 		break;
 	}
 	default:
@@ -581,25 +581,25 @@ static void pageAirradio_btnm_Mod_event_handler (lv_event_t *e)
 		case 0:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eModIdx;
-		xTransmitGUItoSI4735.ucValue = 0;
-		tempeModIdx = xTransmitGUItoSI4735.ucValue;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 0;
+			tempeModIdx = xTransmitGUItoSI4735.ucValue;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 1:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eModIdx;
-		xTransmitGUItoSI4735.ucValue = 1;
-		tempeModIdx = xTransmitGUItoSI4735.ucValue;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 1;
+			tempeModIdx = xTransmitGUItoSI4735.ucValue;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		case 2:
 		{
 			xTransmitGUItoSI4735.eDataDescription = eModIdx;
-		xTransmitGUItoSI4735.ucValue = 2;
-		tempeModIdx = xTransmitGUItoSI4735.ucValue;
-		xTransmitGUItoSI4735.State = true;
+			xTransmitGUItoSI4735.ucValue = 2;
+			tempeModIdx = xTransmitGUItoSI4735.ucValue;
+			xTransmitGUItoSI4735.State = true;
 			break;
 		}
 		default:

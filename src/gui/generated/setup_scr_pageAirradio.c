@@ -216,7 +216,7 @@ void setup_scr_pageAirradio(lv_ui *ui)
 	ui->pageAirradio_label_step_val = lv_label_create(ui->pageAirradio);
 	lv_label_set_text(ui->pageAirradio_label_step_val, "100");
 	lv_label_set_long_mode(ui->pageAirradio_label_step_val, LV_LABEL_LONG_WRAP);
-	lv_obj_set_pos(ui->pageAirradio_label_step_val, 52, 21.5);
+	lv_obj_set_pos(ui->pageAirradio_label_step_val, 52, 22);
 	lv_obj_set_size(ui->pageAirradio_label_step_val, 40, 17);
 
 	//Write style for pageAirradio_label_step_val, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
@@ -888,7 +888,7 @@ void setup_scr_pageAirradio(lv_ui *ui)
 	ui->pageAirradio_label_snr_val = lv_label_create(ui->pageAirradio);
 	lv_label_set_text(ui->pageAirradio_label_snr_val, "40");
 	lv_label_set_long_mode(ui->pageAirradio_label_snr_val, LV_LABEL_LONG_WRAP);
-	lv_obj_set_pos(ui->pageAirradio_label_snr_val, 240, 9);
+	lv_obj_set_pos(ui->pageAirradio_label_snr_val, 239, 8);
 	lv_obj_set_size(ui->pageAirradio_label_snr_val, 27, 14);
 
 	//Write style for pageAirradio_label_snr_val, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.

@@ -54,7 +54,6 @@ typedef enum
 {
     eEmpty = 0,
     eFreq = 1,  // Значение частоты
-    eStatussi4735 = 2
 } AirWebDescription_t;
 
 typedef struct
@@ -63,14 +62,10 @@ typedef struct
     uint16_t ucFreq;
     uint8_t ucSNR;       //  значение  
     uint8_t ucRSSI;      //  значение  
-    uint8_t ucBW;        //  значение
-    uint8_t ucStep;      //  значение
     uint8_t ucBand;
-    char * vcFreq; // Текстовое значение 
+    uint8_t ucslider_vol;
     char * vcFreqRange; // Текстовое значение 
-    char * vcStereoMono;// Текстовое значение
-    char * vcSNR;       // Текстовое значение  
-    char * vcRSSI;      // Текстовое значение  
+    char * vcStereoMono;// Текстовое значение 
     char * vcBW;        // Текстовое значение
     char * vcStep;      // Текстовое значение
     AirWebDescription_t eDataDescription;  // название Элемента

@@ -69,11 +69,6 @@ typedef struct
 	lv_obj_t *pageAirradio_label_snr_val;
 	lv_obj_t *pageAirradio_label_snr_name;
 	lv_obj_t *pageAirradio_label_snr_range;
-	lv_obj_t *screen_1;
-	bool screen_1_del;
-	lv_obj_t *screen_1_label_Name;
-	lv_obj_t *screen_1_label_val;
-	lv_obj_t *screen_1_label_range;
   int global_language;
 }lv_ui;
 
@@ -111,7 +106,6 @@ extern int global_language;
 
 void setup_scr_pageStatic(lv_ui *ui);
 void setup_scr_pageAirradio(lv_ui *ui);
-void setup_scr_screen_1(lv_ui *ui);
 LV_IMG_DECLARE(_nxp60_alpha_40x28);
 LV_IMG_DECLARE(_vol_alpha_43x46);
 

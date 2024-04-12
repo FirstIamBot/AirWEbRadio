@@ -85,14 +85,8 @@ void awgui_reload(Data_Air_GUI data){
 
             lv_label_set_text(guider_ui.pageAirradio_label_wb_val, data.vcBW);
             lv_label_set_text(guider_ui.pageAirradio_label_step_val, data.vcStep);
-            break;
-        case eStatussi4735:
-            lv_label_set_text_fmt(guider_ui.pageAirradio_label_rssi_val,"%3d" , data.ucRSSI);
-            lv_label_set_text_fmt(guider_ui.pageAirradio_label_snr_val,"%3d" , data.ucSNR);
-            //lv_label_set_text(guider_ui.pageAirradio_label_rssi_val, data.vcRSSI);
-            //lv_label_set_text(guider_ui.pageAirradio_label_snr_val, data.vcSNR);
-            //lv_label_set_text(guider_ui.pageAirradio_label_wb_val, data.vcBW);
-            //lv_label_set_text(guider_ui.pageAirradio_label_step_val, data.vcStep);
+            lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, data.ucslider_vol/0.63);
+            lv_slider_set_value(guider_ui.pageAirradio_slider_vol, data.ucslider_vol/0.63, LV_ANIM_OFF);
             break;
         default:
             break;
