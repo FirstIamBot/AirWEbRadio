@@ -39,7 +39,9 @@ typedef enum
     eStepDown = 9,// Перестройка вниз
     eSeekUP = 10,  // Перестройка вверх
     eSeekDown = 11,// Перестройка вниз
-    eslider_vol = 12 // Громкость 
+    eAGCgain    = 12,
+    eSlider_agc = 13,
+    eslider_vol = 14 // Громкость 
 } DataDescription_t;
 //================  Структура данных помещаемых в очередь ===========================
 // 

@@ -218,8 +218,9 @@ uint8_t disableAgc = 0;     // 0 = AGC enabled; 1 = AGC disabled
 uint8_t currentAGCgain     =  18;
 uint8_t previousAGCgain    =  1;
 uint8_t currentAGCgainStep =  1;
+uint8_t AGCgainOnOff  = 0 ; //  (0 = AGC enabled; 1 = AGC disabled);
 uint8_t MaxAGCgain;
-uint8_t MaxAGCgainFM       = 36;  //0 = Minimum attenuation (max gain)
+uint8_t MaxAGCgainFM       = 26;  //0 = Minimum attenuation (max gain)
                                   //36 - Maximum attenuation (min gain)
 uint8_t MaxAGCgainAM       = 37;
 uint8_t MinAGCgain         =  1;
@@ -602,6 +603,24 @@ void Task_Radio(void *pvParameters)
           case eStepDown:
             si4735.frequencyDown();
             Serial.println("Set Frequency Down");
+            break;
+            case eSeekUP:
+            si4735.seekStationUp();
+            Serial.println("Seek Station Up");
+            break;
+          case eSeekDown:
+            si4735.seekStationDown();
+            Serial.println("Seek Station Down");
+            break;
+          case eSlider_agc:
+            currentAGCgain = xReceivedGUIfromSI4735.ucValue; 
+            si4735.setAutomaticGainControl(AGCgainOnOff, currentAGCgain);
+            Serial.print("Set AGC = ");Serial.println(currentAGCgain); 
+            break;
+          case eAGCgain:
+            AGCgainOnOff = xReceivedGUIfromSI4735.ucValue; 
+            si4735.setAutomaticGainControl(AGCgainOnOff, currentAGCgain);
+            Serial.print("AGCgainOnOff = ");Serial.println(AGCgainOnOff); 
             break;
           case eslider_vol:
             currentVOL = xReceivedGUIfromSI4735.ucValue*0.63;       

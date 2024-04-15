@@ -44,8 +44,8 @@ typedef struct
 	lv_obj_t *pageAirradio_label_step_range;
 	lv_obj_t *pageAirradio_label_step_name;
 	lv_obj_t *pageAirradio_label_wb_name;
-	lv_obj_t *pageAirradio_label_wb_val;
 	lv_obj_t *pageAirradio_label_wb_range;
+	lv_obj_t *pageAirradio_label_wb_val;
 	lv_obj_t *pageAirradio_imgbtn_1;
 	lv_obj_t *pageAirradio_imgbtn_1_label;
 	lv_obj_t *pageAirradio_cont_StepAM;
@@ -69,6 +69,10 @@ typedef struct
 	lv_obj_t *pageAirradio_label_snr_val;
 	lv_obj_t *pageAirradio_label_snr_name;
 	lv_obj_t *pageAirradio_label_snr_range;
+	lv_obj_t *pageAirradio_cont_AGC;
+	lv_obj_t *pageAirradio_textprogress_AGC;
+	lv_obj_t *pageAirradio_slider_AGC;
+	lv_obj_t *pageAirradio_cb_AGC;
   int global_language;
 }lv_ui;
 
@@ -114,8 +118,12 @@ LV_FONT_DECLARE(lv_font_montserratMedium_10)
 LV_FONT_DECLARE(lv_font_Antonio_Regular_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
+LV_FONT_DECLARE(lv_font_montserratMedium_24)
+LV_FONT_DECLARE(lv_font_montserratMedium_19)
+LV_FONT_DECLARE(lv_font_montserratMedium_20)
 LV_FONT_DECLARE(lv_font_montserratMedium_26)
 LV_FONT_DECLARE(lv_font_montserratMedium_14)
+LV_FONT_DECLARE(lv_font_montserratMedium_11)
 
 
 #ifdef __cplusplus
