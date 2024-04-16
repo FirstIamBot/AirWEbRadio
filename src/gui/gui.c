@@ -5,8 +5,6 @@
 
 #include "Arduino.h"
 
-
-
 lv_ui guider_ui;
 
 /**
@@ -86,7 +84,7 @@ void awgui_reload(Data_Air_GUI data){
             lv_label_set_text(guider_ui.pageAirradio_label_wb_val, data.vcBW);
             lv_label_set_text(guider_ui.pageAirradio_label_step_val, data.vcStep);
             lv_textprogress_set_value(guider_ui.pageAirradio_textprogress_vol, data.ucslider_vol/0.63);
-            lv_slider_set_value(guider_ui.pageAirradio_slider_vol, data.ucslider_vol/0.63, LV_ANIM_OFF);
+            lv_slider_set_value(guider_ui.pageAirradio_slider_vol, data.ucslider_vol/0.63, LV_ANIM_ON);
             break;
         default:
             break;

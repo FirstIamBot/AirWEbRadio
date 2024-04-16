@@ -74,7 +74,7 @@ typedef struct
 } Data_Air_GUI;
 //==================================================================================================
 
-
+static uint8_t button_pres = 0;
 void custom_init(lv_ui *ui);
 
 

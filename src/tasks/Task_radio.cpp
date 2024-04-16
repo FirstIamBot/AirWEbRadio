@@ -46,7 +46,23 @@ void SaveInEeprom (void* arg);
 void printConfig(void);
 void loadConfig(void);
 void EraseConfig(void);
-//===========================================++++=== Bandwidth AM, SSB, FM     ==================================
+/*===========================================++++=== Bandwidth AM, SSB, FM     ==================================
+  The bandwidth of the AM channel filter data type (bandwidthFM)
+  0  Automatically select proper channel filter (Default) |
+  1  Force wide (110 kHz) channel filter |
+  2  Force narrow (84 kHz) channel filter |
+  3  Force narrower (60 kHz) channel filter |
+  4  Force narrowest (40 kHz) channel filter |
+      
+  Полоса пропускания AM (bandwidthAM)
+  0 = 6 kHz Bandwidth
+  1 = 4 kHz Bandwidth
+  2 = 3 kHz Bandwidth
+  3 = 2 kHz Bandwidth
+  4 = 1 kHz Bandwidth
+  5 = 1.8 kHz Bandwidth
+  6 = 2.5 kHz Bandwidth, gradual roll off
+ ====================================================================================================================*/
 const char *  bandwidthSSB[] = {
     "0.5",
     "1.0",
@@ -56,17 +72,17 @@ const char *  bandwidthSSB[] = {
     "4.0"};
 
 const char *  bandwidthAM[] = {
-    "1.0",
-    "1.8",
-    "2.0",
-    "2.5",
-    "3.0",
+    "6.0",
     "4.0",
-    "6.0"};
+    "3.0",
+    "2.5",
+    "2.0",
+    "1.8",
+    "1.0" };
 
 const char * bandwidthFM[] = {
     "AUT", // Automatic - default
-    "110", // Force wide (110 kHz) channel filter.
+    "110", 
     " 84",
     " 60",
     " 40"};

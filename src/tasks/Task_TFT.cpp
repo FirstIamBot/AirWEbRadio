@@ -65,7 +65,7 @@ static lv_indev_t * indev_button;
 static lv_indev_drv_t touch_indev_drv;
 static lv_indev_drv_t encoder_indev_drv;
 
-static int32_t encoder_diff;
+int32_t encoder_diff;
 static lv_indev_state_t encoder_state;
 
 //######################## Extern variable from GUI  ###################################
@@ -109,7 +109,6 @@ void Task_TFT(void *pvParameters)
 
     Serial.println( LVGL_Arduino );
     Serial.println( "I am LVGL_Arduino" );
-
     /*  
     initTFT();
     gui_meter();
@@ -119,13 +118,10 @@ void Task_TFT(void *pvParameters)
     lv_widgets(); 
     */
     initCalTFT();
-    char cstr[16]; //*cstr; //
     Serial.println( "Hello LVGL" );
     
     while (1) // A Task shall never return or exit.
     {
-        
-
         /* Delay 1 tick (assumes FreeRTOS tick is 10ms */
         //vTaskDelay(pdMS_TO_TICKS(10));
         /* Try to take the semaphore, call lvgl related function on success  */
@@ -159,6 +155,7 @@ void Task_TFT(void *pvParameters)
         {
             awgui_reload(xResivedSI4735fromdGUI);
         }
+
 /*
         xSemaphoreTake(xSemaphoreSPI, portMAX_DELAY);
         lv_task_handler();
@@ -168,7 +165,7 @@ void Task_TFT(void *pvParameters)
     }
 }
 //######################################################################################
-/*Initialize your keypad*/
+/*Initialize your encoder*/
 static void encoder_init(void)
 {
     Encoder.begin();
@@ -176,10 +173,10 @@ static void encoder_init(void)
     //Encoder.setup([]{Encoder.readEncoder_ISR();}); // установка прерываний для Энкодера
     //optionally we can set boundaries and if values should cycle or not
     bool circleValues = false;
-    Encoder.setBoundaries(0, 400, circleValues);// Установка границы от текущей темрературы до максимальной
-    Encoder.setAcceleration(150); //or set the value - larger number = more accelearation; 0 or 1 means disabled acceleration
+    Encoder.setBoundaries(0, 100, circleValues);// Установка границы от текущей темрературы до максимальной
+    Encoder.setAcceleration(50); //or set the value - larger number = more accelearation; 0 or 1 means disabled acceleration
     //Encoder.disableAcceleration(); //acceleration is now enabled by default - disable if you dont need it
-    Encoder.setEncoderValue(25); // init start value rotary encoder
+    Encoder.setEncoderValue(50); // init start value rotary encoder
     Serial.println("Encoder init");
 
 }
@@ -188,12 +185,24 @@ static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 {
     if(Encoder.encoderChanged())
 	{
-        encoder_diff = Encoder.readEncoder();
-        Serial.print("encoder_diff = ");Serial.println(encoder_diff);
+        data->enc_diff = Encoder.readEncoder();
+        Serial.print("encoder_diff = ");Serial.println(data->enc_diff);
+        /*
+        if (data->enc_diff != 0) {
+	    data->key = data->enc_diff < 0 ? LV_KEY_LEFT : LV_KEY_RIGHT;
+	    }
+        */
+        if ((encoder_diff - data->enc_diff) > 0) {
+	        //data->key = LV_KEY_UP;
+            encoder_diff = data->enc_diff;
+	    }
+        else{
+            //data->key = LV_KEY_DOWN;
+            encoder_diff = data->enc_diff;
+        }
 	}
     if(Encoder.isEncoderButtonDown()) data->state = LV_INDEV_STATE_PRESSED;
     else data->state = LV_INDEV_STATE_RELEASED;
-
 }
 /*Call this function in an interrupt to process encoder events (turn, press)*/
 static void encoder_handler(void)
