@@ -30,6 +30,10 @@
         "utility": "cpp",
         "widgets_init.h": "c",
         "stdio.h": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "string": "cpp",
+        "string_view": "cpp",
+        "random": "cpp",
+        "*.053": "cpp"
     }
 }

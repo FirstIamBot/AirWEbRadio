@@ -40,10 +40,17 @@
 
 #include "patches/vs1053b-patches.plg"
 #include "patches/admix-stereo.plg"
-#include "patches/admix-mono.plg"
-//#include "patches/admix-left.plg"
-//#include "patches/admix-right.plg"
+#include "patches/admoneq.plg"
+#include "patches/vs1053b_equ.plg"
 //#include "patches/admix-swap.plg"
+//#include "patches/vs1053b-patches-flac.plg"
+#include "patches/spectrumAnalyzer1053b.plg"
+//#include "patches/vs1053pcm.plg"
+//#include "patches/vs1053b-patches-flac-latm.plg"
+//#include "patches/vs1053b-patches-pitch.plg"
+
+//#include "patches/admix-mono.plg"
+//#include "patches/admix-left.plg"
 
 
 class VS1053 {
@@ -68,13 +75,16 @@ private:
     const uint8_t SCI_VOL = 0xB;
     const uint8_t SCI_AICTRL0 = 0xC;
     const uint8_t SCI_AICTRL1 = 0xD;
+    const uint8_t SCI_AICTRL2 = 0xE;
+    const uint8_t SCI_AICTRL3 = 0xF;
     const uint8_t SCI_num_registers = 0xF;
     // SCI_MODE bits
     const uint8_t SM_SDINEW = 11;           // Bitnumber in SCI_MODE always on
+    const uint8_t SM_ADPCM =12;             // Bitnumber in SCI_MODE PCM/ADPCM recording active
     const uint8_t SM_RESET = 2;             // Bitnumber in SCI_MODE soft reset
     const uint8_t SM_CANCEL = 3;            // Bitnumber in SCI_MODE cancel song
     const uint8_t SM_TESTS = 5;             // Bitnumber in SCI_MODE for tests
-    const uint8_t SM_LINE1 = 14;            // Bitnumber in SCI_MODE for Line input
+    const uint8_t SM_LINE1 = 14;            // Bitnumber in SCI_MODE MIC(0) / LINE1(1) selector for Line input
     SPISettings VS1053_SPI;                 // SPI settings for this slave
     uint8_t endFillByte;                    // Byte to send when stopping song
 protected:
@@ -186,8 +196,12 @@ public:
 
     // Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
+    //*******************************************************
     void loadAdmixVs1053Patches();
     void switchToAdmixMode();
+
+    void loadAdmixVsADMONEQatches();
+    void switchToADMONEQMode();
 };
 
 #endif

@@ -67,14 +67,16 @@ void custom_init(lv_ui *ui)
     /* Add your codes here */
     group = lv_group_create();
     lv_group_set_default(group);
-    //lv_indev_set_group(indev_touchpad, group);
+    
+    lv_indev_set_group(indev_touchpad, group);
     lv_indev_set_group(indev_encoder, group);
     
-    lv_group_add_obj(group, ui->pageAirradio_imgbtn_1);
-    lv_group_add_obj(group, ui->pageAirradio_slider_vol);
-    lv_group_add_obj(group, ui->pageAirradio_textprogress_vol);
+    //lv_group_add_obj(group, ui->pageAirradio_imgbtn_1);
+    //lv_group_add_obj(group, ui->pageAirradio_cont_vol);
+    //lv_group_add_obj(group, ui->pageAirradio_slider_vol);  
+    //lv_group_add_obj(group, ui->pageAirradio_textprogress_vol);
 
-    lv_obj_add_event_cb(ui->pageAirradio_imgbtn_1, event_cb_ecoder_button, LV_EVENT_ALL, ui);    
+    //lv_obj_add_event_cb(ui->pageAirradio_imgbtn_1, event_cb_ecoder_button, LV_EVENT_ALL, ui);    
 }
 
 

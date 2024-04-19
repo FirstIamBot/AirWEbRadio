@@ -1,31 +1,5 @@
-/* User application code loading tables for VS10xx */
-
-#if 0
-void LoadUserCode(void) {
-  int i = 0;
-
-  while (i<sizeof(plugin)/sizeof(plugin[0])) {
-    unsigned short addr, n, val;
-    addr = plugin[i++];
-    n = plugin[i++];
-    if (n & 0x8000U) { /* RLE run, replicate n samples */
-      n &= 0x7FFF;
-      val = plugin[i++];
-      while (n--) {
-        WriteVS10xxRegister(addr, val);
-      }
-    } else {           /* Copy run, copy n samples */
-      while (n--) {
-        val = plugin[i++];
-        WriteVS10xxRegister(addr, val);
-      }
-    }
-  }
-}
-#endif
-
 #ifndef SKIP_PLUGIN_VARNAME
-const unsigned short PATCHES_ADMIX_STEREO[117] = { /* Compressed plugin */
+const unsigned short ADMIX_STEREO[117] = { /* Compressed plugin */
 #endif
   0x0007, 0x0001, 0x8f00, 0x0006, 0x0070, 0x2803, 0xc2c0, 0x0030, /*    0 */
   0x0697, 0x0fff, 0xfdc0, 0x3700, 0x4024, 0xb100, 0x0024, 0xbc82, /*    8 */
@@ -42,7 +16,7 @@ const unsigned short PATCHES_ADMIX_STEREO[117] = { /* Compressed plugin */
   0x0024, 0xf128, 0x0024, 0x4244, 0x0024, 0x3b11, 0x8024, 0x3b00, /*   60 */
   0x8024, 0x36f0, 0x9804, 0x36f4, 0xd806, 0x3602, 0x8024, 0x0030, /*   68 */
   0x0717, 0x2100, 0x0000, 0x3f05, 0xdbd7,
-//#define PLUGIN_SIZE 117  
+#define PLUGIN_SIZE 117
 #ifndef SKIP_PLUGIN_VARNAME
 };
 #endif

@@ -193,11 +193,11 @@ static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 	    }
         */
         if ((encoder_diff - data->enc_diff) > 0) {
-	        //data->key = LV_KEY_UP;
+	        data->key = LV_KEY_UP;
             encoder_diff = data->enc_diff;
 	    }
         else{
-            //data->key = LV_KEY_DOWN;
+            data->key = LV_KEY_DOWN;
             encoder_diff = data->enc_diff;
         }
 	}

@@ -36,11 +36,12 @@ VS1053::VS1053(uint8_t _cs_pin, uint8_t _dcs_pin, uint8_t _dreq_pin)
         : cs_pin(_cs_pin), dcs_pin(_dcs_pin), dreq_pin(_dreq_pin) {
 }
 
-void delayRTOS(int ms) {
+void delay(int ms) {
 	int _ms = ms + (portTICK_PERIOD_MS - 1);
 	TickType_t xTicksToDelay = _ms / portTICK_PERIOD_MS;
 	vTaskDelay(xTicksToDelay);
 }
+
 uint16_t VS1053::read_register(uint8_t _reg) const {
     uint16_t result;
 
@@ -144,7 +145,7 @@ bool VS1053::testComm(const char *header) {
         {
             LOG("VS1053 error retry SB:%04X R1:%04X R2:%04X\n", i, r1, r2);
             cnt++;
-            delayRTOS(10);
+            delay(10);
         }
         yield(); // Allow ESP firmware to do some bookkeeping
     }
@@ -157,20 +158,20 @@ void VS1053::begin() {
     pinMode(dcs_pin, OUTPUT);
     digitalWrite(dcs_pin, HIGH); // Start HIGH for SCI en SDI
     digitalWrite(cs_pin, HIGH);
-    delayRTOS(100);
+    delay(100);
     LOG("\n");
     LOG("Reset VS1053...\n");
     digitalWrite(dcs_pin, LOW); // Low & Low will bring reset pin low
     digitalWrite(cs_pin, LOW);
-    delayRTOS(500);
+    delay(500);
     LOG("End reset VS1053...\n");
     digitalWrite(dcs_pin, HIGH); // Back to normal again
     digitalWrite(cs_pin, HIGH);
-    delayRTOS(500);
+    delay(500);
     // Init SPI in slow mode ( 0.2 MHz )
     VS1053_SPI = SPISettings(200000, MSBFIRST, SPI_MODE0);
     // printDetails("Right after reset/startup");
-    delayRTOS(20);
+    delay(20);
     // printDetails("20 msec after reset");
     if (testComm("Slow SPI,Testing VS1053 read/write registers...\n")) {
         //softReset();
@@ -182,12 +183,12 @@ void VS1053::begin() {
         VS1053_SPI = SPISettings(4000000, MSBFIRST, SPI_MODE0);
         writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_LINE1));
         testComm("Fast SPI, Testing VS1053 read/write registers again...\n");
-        delayRTOS(10);
+        delay(10);
         await_data_request();
         endFillByte = wram_read(0x1E06) & 0xFF;
         LOG("endFillByte is %X\n", endFillByte);
         //printDetails("After last clocksetting") ;
-        delayRTOS(100);
+        delay(100);
     }
 }
 
@@ -254,7 +255,7 @@ void VS1053::stopSong() {
     int i;            // Loop control
 
     sdi_send_fillers(2052);
-    delayRTOS(10);
+    delay(10);
     writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_CANCEL));
     for (i = 0; i < 200; i++) {
         sdi_send_fillers(32);
@@ -264,7 +265,7 @@ void VS1053::stopSong() {
             LOG("Song stopped correctly after %d msec\n", i * 10);
             return;
         }
-        delayRTOS(10);
+        delay(10);
     }
     printDetails("Song stopped incorrectly!");
 }
@@ -272,7 +273,7 @@ void VS1053::stopSong() {
 void VS1053::softReset() {
     LOG("Performing soft-reset\n");
     writeRegister(SCI_MODE, _BV(SM_SDINEW) | _BV(SM_RESET));
-    delayRTOS(10);
+    delay(10);
     await_data_request();
 }
 
@@ -287,7 +288,7 @@ void VS1053::printDetails(const char *header) {
         regbuf[i] = read_register(i);
     }
     for (i = 0; i <= SCI_num_registers; i++) {
-        delayRTOS(5);
+        delay(5);
         LOG("%3X - %5X\n", i, regbuf[i]);
     }
 }
@@ -303,7 +304,7 @@ void VS1053::printDetails(const char *header) {
 void VS1053::switchToMp3Mode() {
     wram_write(0xC017, 3); // GPIO DDR = 3
     wram_write(0xC019, 0); // GPIO ODATA = 0
-    delayRTOS(100);
+    delay(100);
     LOG("Switched to mp3 mode\n");
     softReset();
 }
@@ -311,14 +312,7 @@ void VS1053::switchToMp3Mode() {
  * An optional switch.
  * Плагин для переключения на линейный вход 
  */
-void VS1053::switchToAdmixMode() {
-    writeRegister(SCI_MODE, _BV(SM_LINE1)); // Выключение Микрофона
-    writeRegister(SCI_AICTRL0, 0xffee);     // Установка громкости -3 Дб(0xfffd), возможна регулировка до -31 Дб(0xffe0)
-    delayRTOS(100); 
-    writeRegister(SCI_AIADDR, 0x0f00); //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
-    LOG("Switched to AdMix mode\n");   
-    softReset();
-}
+
 
 /**
  * A lightweight method to check if VS1053 is correctly wired up (power supply and connection to SPI interface).
@@ -414,5 +408,49 @@ void VS1053::loadDefaultVs1053Patches() {
 };
 
 void VS1053::loadAdmixVs1053Patches() {
-   loadUserCode(PATCHES_ADMIX_STEREO);
+   loadUserCode(ADMIX_STEREO);
 };
+
+
+void VS1053::switchToAdmixMode() {
+    //=========================
+    //wram_write(0xC017, 0x00f0); 
+    //wram_write(0xc040, 0x000c);
+    //========== Mp3Mode =======
+    
+    //wram_write(0xC017, 3); // GPIO DDR = 3
+    //wram_write(0xC019, 0); // GPIO ODATA = 0
+            
+    //writeRegister(SCI_MODE, _BV(SM_ADPCM));
+    //writeRegister(SCI_MODE, read_register(SCI_MODE) | 0x4000); // Выключение Микрофона
+    writeRegister(SCI_MODE, _BV(SM_LINE1)); //writeRegister ( SCI_MODE, _BV ( SM_SDINEW ) | _BV ( SM_LINE1 )); //  Выключение Микрофона 
+    writeRegister(SCI_AICTRL0, 0xfffd);     // Установка громкости -3 Дб(0xfffd), возможна регулировка до -31 Дб(0xffe0)
+    writeRegister(SCI_AIADDR, 0x0f00);      //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
+    LOG("Switched to AdMix mode\n");   
+}
+
+
+void VS1053::loadAdmixVsADMONEQatches() {
+   
+   //loadUserCode(spectrumAnalyzer1053b);
+   //loadUserCode(PATCHES_ADMIX_STEREO);
+   //loadUserCode(PATCHES_FLAC);
+   //loadUserCode(ADMIX_STEREO);
+   //loadUserCode(plugin);
+   loadUserCode(ADMONEQ);
+   //loadUserCode(plugin);
+
+};
+
+void VS1053::switchToADMONEQMode() {
+
+    writeRegister (SCI_MODE, 0x0c00);
+    writeRegister (SCI_CLOCKF, 0x8000);
+    writeRegister (SCI_AICTRL0, 0x5dc0);
+    writeRegister (SCI_AICTRL1, 0x0000);
+    writeRegister (SCI_AICTRL2, 0x1000);
+    writeRegister (SCI_AICTRL3, 0x0002);
+    writeRegister (SCI_BASS, 0x0000);
+    writeRegister (SCI_VOL, 0x1010);
+
+}

@@ -29,7 +29,7 @@ http://andrew25kir.blogspot.com/2017/10/karadio-esp32.html
   |   LED Coll.|     3V3     | 08 |            |            |            |            |         
   |   SDO(MIS) |     19      | 09 |            |            |            |            | 
   |   T_CLK    |     18      | 10 |            |            |            |     CLK    | 
-  |   T_CS     |     16      | 11 |            |            |            |            |
+  |   T_CS     |      5      | 11 |            |            |            |            |
   | T_DIN(MOSI)|     23      | 12 |            |            |            |    MOSI    |
   |   T_DO     |     19      | 13 |            |            |            |    MISO    |
   |   T_IRQ    |             |    |            |            |            |            | 
@@ -115,9 +115,9 @@ void setup(){
 
 	if( xQueueGUItoSI4735 != NULL && xQueueSI4735toGUI != NULL )
 	{
+        xTaskCreatePinnedToCore( Task_WebRadio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
         xTaskCreatePinnedToCore( Task_TFT, " TFT", 1000*4,  NULL, 2, NULL, app_cpu );
         xTaskCreatePinnedToCore( Task_Radio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
-        xTaskCreatePinnedToCore( Task_WebRadio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
 		vTaskStartScheduler();
 	}
     

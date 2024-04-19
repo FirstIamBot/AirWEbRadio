@@ -16,7 +16,7 @@
 #define AirRadio 1
 
 
-uint8_t RadioMode = 1;
+uint8_t RadioMode;
 
 uint8_t VOLUME ;      // Volume
 uint8_t TONE ;        // Tone bass/treble (4 nibbles)
@@ -39,30 +39,33 @@ void Task_WebRadio(void *pvParameters) // This is a task.
     VOLUME = 90;      // Default volume
     TONE = 0x51;      // Default tone bass/treble (4 nibbles)
     // ******************** Setup VS1053 audio codec
+    RadioMode = WebRadio ; // AirRadio !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // initialize SPI
     SPI.begin();
-    Serial.println("Hello VS1053!\n");
+    Serial.println("Start Task WebRadio."); 
     // initialize a player
     player.begin();
 
-    if (RadioMode == WebRadio){ // AirRadio
-      player.loadAdmixVs1053Patches();
+    if (RadioMode == AirRadio){ // AirRadio
+      player.loadAdmixVs1053Patches();      
       player.switchToAdmixMode();
-      Serial.println("Switched to mp3 mode");
+      Serial.println("Switched to ADmix mode");
     }
-    else{
+    else{        
       player.loadDefaultVs1053Patches();
       player.switchToMp3Mode(); // optional, some boards require this
+      Serial.println("Switched to mp3 mode");
     }
     player.setVolume(VOLUME);
  
     while (1) // A Task shall never return or exit.
     {
-      if (RadioMode == WebRadio){// AirRadio
+      if (RadioMode == AirRadio){
         Serial.println("Playing from Adumix");  
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(1500);
+        //loop_vs1053();
       }
-      else{
+      else{// AirRadio
         loop_vs1053();
       }
     }

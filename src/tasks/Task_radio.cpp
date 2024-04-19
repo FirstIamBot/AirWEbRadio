@@ -521,7 +521,7 @@ void Task_Radio(void *pvParameters)
     uint16_t XZ; //Так для пробы
     static uint16_t lastXZ; //Так для пробы
 
-    Serial.println("Start Task Radio.");  
+    Serial.println("Start Task AirRadio.");  
     initRadio();
   
     while(1)
@@ -652,7 +652,6 @@ void Task_Radio(void *pvParameters)
         // Очередь пуста
         Serial.println("Queue Empty !!!");
       }
-      //vTaskDelay(200);
       /*
         Очередь xQueueSI4735toGUI для отравки информации на экран
       */
