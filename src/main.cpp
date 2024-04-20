@@ -115,9 +115,10 @@ void setup(){
 
 	if( xQueueGUItoSI4735 != NULL && xQueueSI4735toGUI != NULL )
 	{
-        xTaskCreatePinnedToCore( Task_WebRadio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
+
         xTaskCreatePinnedToCore( Task_TFT, " TFT", 1000*4,  NULL, 2, NULL, app_cpu );
-        xTaskCreatePinnedToCore( Task_Radio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
+        xTaskCreatePinnedToCore( Task_Radio, "AirRadio", 1000*2,  NULL, 2, NULL, app_cpu );
+        xTaskCreatePinnedToCore( Task_WebRadio, "Web Radio", 1000*2,  NULL, 2, NULL, app_cpu );
 		vTaskStartScheduler();
 	}
     

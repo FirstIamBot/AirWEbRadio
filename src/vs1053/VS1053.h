@@ -39,19 +39,17 @@
 #include "ConsoleLogger.h"
 
 #include "patches/vs1053b-patches.plg"
+
 #include "patches/admix-stereo.plg"
+#include "patches/spectrumAnalyzerAppl1053b-2.plg"
 #include "patches/admoneq.plg"
 #include "patches/vs1053b_equ.plg"
+
 //#include "patches/admix-swap.plg"
 //#include "patches/vs1053b-patches-flac.plg"
-#include "patches/spectrumAnalyzer1053b.plg"
 //#include "patches/vs1053pcm.plg"
 //#include "patches/vs1053b-patches-flac-latm.plg"
 //#include "patches/vs1053b-patches-pitch.plg"
-
-//#include "patches/admix-mono.plg"
-//#include "patches/admix-left.plg"
-
 
 class VS1053 {
 private:
@@ -197,11 +195,9 @@ public:
     // Loads the latest generic firmware patch.
     void loadDefaultVs1053Patches();
     //*******************************************************
-    void loadAdmixVs1053Patches();
-    void switchToAdmixMode();
 
-    void loadAdmixVsADMONEQatches();
-    void switchToADMONEQMode();
+    void loadUserPatches(uint8_t pch);
+    void switchToUserMode(uint8_t md);
 };
 
 #endif

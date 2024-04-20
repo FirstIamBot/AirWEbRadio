@@ -407,50 +407,52 @@ void VS1053::loadDefaultVs1053Patches() {
    loadUserCode(PATCHES);
 };
 
-void VS1053::loadAdmixVs1053Patches() {
-   loadUserCode(ADMIX_STEREO);
-};
-
-
-void VS1053::switchToAdmixMode() {
-    //=========================
-    //wram_write(0xC017, 0x00f0); 
-    //wram_write(0xc040, 0x000c);
-    //========== Mp3Mode =======
-    
-    //wram_write(0xC017, 3); // GPIO DDR = 3
-    //wram_write(0xC019, 0); // GPIO ODATA = 0
-            
-    //writeRegister(SCI_MODE, _BV(SM_ADPCM));
-    //writeRegister(SCI_MODE, read_register(SCI_MODE) | 0x4000); // Выключение Микрофона
-    writeRegister(SCI_MODE, _BV(SM_LINE1)); //writeRegister ( SCI_MODE, _BV ( SM_SDINEW ) | _BV ( SM_LINE1 )); //  Выключение Микрофона 
-    writeRegister(SCI_AICTRL0, 0xfffd);     // Установка громкости -3 Дб(0xfffd), возможна регулировка до -31 Дб(0xffe0)
-    writeRegister(SCI_AIADDR, 0x0f00);      //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
-    LOG("Switched to AdMix mode\n");   
-}
-
-
-void VS1053::loadAdmixVsADMONEQatches() {
-   
-   //loadUserCode(spectrumAnalyzer1053b);
-   //loadUserCode(PATCHES_ADMIX_STEREO);
-   //loadUserCode(PATCHES_FLAC);
-   //loadUserCode(ADMIX_STEREO);
-   //loadUserCode(plugin);
-   loadUserCode(ADMONEQ);
-   //loadUserCode(plugin);
+void VS1053::loadUserPatches(uint8_t pch) {
+    if(pch == 0)
+    {
+        LOG("Start load AdMix mode\n"); 
+        loadUserCode(ADMIX_STEREO);
+        LOG("End load AdMix mode\n"); 
+    }
+    if(pch == 1)
+    {
+        loadUserCode(ADMONEQ);
+    }
+    if(pch == 2)
+    {
+        LOG("Start load SPECTRUMANALIZER mode\n"); 
+        loadUserCode(SPECTRUMANALIZER);
+        LOG("End load SPECTRUMANALIZER mode\n"); 
+    }
 
 };
 
-void VS1053::switchToADMONEQMode() {
+void VS1053::switchToUserMode(uint8_t md) {
 
-    writeRegister (SCI_MODE, 0x0c00);
-    writeRegister (SCI_CLOCKF, 0x8000);
-    writeRegister (SCI_AICTRL0, 0x5dc0);
-    writeRegister (SCI_AICTRL1, 0x0000);
-    writeRegister (SCI_AICTRL2, 0x1000);
-    writeRegister (SCI_AICTRL3, 0x0002);
-    writeRegister (SCI_BASS, 0x0000);
-    writeRegister (SCI_VOL, 0x1010);
-
+    if(md == 0)
+    {
+          
+        writeRegister(SCI_MODE, _BV(SM_ADPCM));
+        //writeRegister(SCI_MODE, read_register(SCI_MODE) | 0x4000); // Выключение Микрофона
+        writeRegister(SCI_MODE, _BV ( SM_SDINEW ) | _BV ( SM_LINE1 )); //  writeRegister(SCI_MODE, _BV(SM_LINE1)); // Выключение Микрофона 
+        writeRegister(SCI_AICTRL0, 0xfffd);     // Установка громкости -3 Дб(0xfffd), возможна регулировка до -31 Дб(0xffe0)
+        writeRegister(SCI_AIADDR, 0x0f00);      //0x0f00 - активация плагина, 0x0f01 - деактивация плагина
+        LOG("Switched to AdMix mode\n"); 
+    }
+    if(md == 1)
+    {
+        writeRegister (SCI_MODE, 0x0c00);
+        writeRegister (SCI_CLOCKF, 0x8000);
+        writeRegister (SCI_AICTRL0, 0x5dc0);
+        writeRegister (SCI_AICTRL1, 0x0000);
+        writeRegister (SCI_AICTRL2, 0x1000);
+        writeRegister (SCI_AICTRL3, 0x0002);
+        writeRegister (SCI_BASS, 0x0000);
+        writeRegister (SCI_VOL, 0x1010);
+        LOG("Switched to ADMONEQ mode\n");  
+    }
+        if(md == 2)
+    {
+        return; 
+    }
 }

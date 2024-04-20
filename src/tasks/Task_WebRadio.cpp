@@ -39,7 +39,7 @@ void Task_WebRadio(void *pvParameters) // This is a task.
     VOLUME = 90;      // Default volume
     TONE = 0x51;      // Default tone bass/treble (4 nibbles)
     // ******************** Setup VS1053 audio codec
-    RadioMode = WebRadio ; // AirRadio !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    RadioMode = AirRadio; //WebRadio  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // initialize SPI
     SPI.begin();
     Serial.println("Start Task WebRadio."); 
@@ -47,9 +47,10 @@ void Task_WebRadio(void *pvParameters) // This is a task.
     player.begin();
 
     if (RadioMode == AirRadio){ // AirRadio
-      player.loadAdmixVs1053Patches();      
-      player.switchToAdmixMode();
-      Serial.println("Switched to ADmix mode");
+      player.loadUserPatches(0);
+      //player.loadUserPatches(2);
+      player.switchToUserMode(0);
+      Serial.println("Switched to User mode");
     }
     else{        
       player.loadDefaultVs1053Patches();
